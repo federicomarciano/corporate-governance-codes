@@ -1,5 +1,5 @@
 ********************************************************************************
-* create.do   08\24\2021 *******************************************************
+* create.do   09\17\2021 *******************************************************
 ********************************************************************************
 /*
 
@@ -804,11 +804,11 @@ foreach i in iso_environment iso_workenviro iso_production{
 	*this is needed because in ISOdata.dta in the variables are zero when should be missing
 	replace `i' =. if `i'==0
 	
-	*presence takes value zero if you receive the certification at least once
+	*presence takes value zero if you never receive the certification.
 	by cvr_firm: egen presence_`i'=sum(`i')
 	
 	*this wil become x_lim 
-	replace `i'=0 if `i'==. & presence_`i'!=0 & presence_`i'!=. 
+	replace `i'=0 if `i'==. & presence_`i'!=0  
      
 	*I make sure to have a dummy which takes value one when the certification is still valid. 
 	gen `i'_ext=`i'
@@ -1096,8 +1096,6 @@ order nat_ultimate_owned gov_ultimate_owned priv_ultimate_owned listed_ultimate_
 
 *SAVE***************************************************************************
 save CorporateGovernance_Main/DoFiles/CorporateGovernance_Master.dta, replace 
-
-
 
 
 
