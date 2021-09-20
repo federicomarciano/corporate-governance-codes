@@ -24,12 +24,8 @@ import pandas as pd
 
 
 #define the dataset
-<<<<<<< HEAD
 df = pd.DataFrame(columns=['company_name', 'cvr_firm', 'p_number','year', 'air', 'GHGs','strange_air', 'water_rec', 'strange_water_rec',
                            'water_sew', 'strange_water_sew', 'strange_list'])
-=======
-df = pd.DataFrame(columns=['company_name', 'cvr_firm', 'p_number','year', 'GHGs','air_tox', 'water_rec', 'water_sew'])
->>>>>>> greenaccounts
 
 
 #dictionary for air emission toxicity weights
@@ -53,7 +49,6 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Heptachlor":4600000,
           "Hexachlorbenzen (HCB)":1600000, 
           "Hydrogencyanid (HCN)":4400, 
-<<<<<<< HEAD
           "Kobber og kobberforbindelser (som Cu)":1500,  
           "Kviksølv og kviksølvforbindelser (som Hg)":12000,
           "Lindan":110000,  
@@ -117,49 +112,15 @@ dict_air_nP={"hch":180,
           "Antimon":12000, 
           "Kobolt (som Co)":17000000, 
           "V":140}
-=======
-          "Kobber og kobberforbindelser (som Cu)":1/100, 
-          "Kuldioxid (CO2)":1/100000000, 
-          "Kulmonoxid (CO)":1/500000, 
-          "Kviksølv og kviksølvforbindelser (som Hg)":1/10,
-          "Kvælstofoxider (NOx/NO2)":1/100000, 
-          "Lindan":1, 
-          "Metan (CH4)":1/100000, 
-          "Mirex":1,
-          "Naphthalen":1/100, 
-          "Nikkel og nikkelforbindelser (som Ni)":1/50, 
-          "Partikler (PM10)":1/50000, 
-          "PCDD + PCDF (dioxiner + furaner) (som Teq)":1/0.0001, 
-          "Pentachlorbenzen":1, 
-          "Pentachlorphenol (PCP)":1/10, 
-          "Perfluorcarboner (PFC)":1/100, 
-          "Polychlorerede biphenyler (PCB)":1/0.1, 
-          "Polycykliske aromatiske kulbrinter (PAH)":1/50,
-          "Svovlhexafluorid (SF6)":1/50, 
-          "Svovloxider (SOx/SO2)":1/150000, 
-          "Tetrachlorethylen (PER)":1/2000, 
-          "Tetrachlormethan (TCM)":1/100, 
-          "Toxaphen":1, 
-          "Trichlorbenzener (TCB) (alle isomere)":1/10, 
-          "Trichlorethylen":1/2000, 
-          "Trichlormethan":1/500, 
-          "Vinylchlorid":1/1000, 
-          "Zink og zinkforbindelser (som Zn)":1/200}
->>>>>>> greenaccounts
 
 
 #dictionary for water emission toxicity weights
 dict_water={"1,2-dichlorethan (EDC)":91000, 
-<<<<<<< HEAD
             "Alachlor":80000, 
-=======
-            "Alachlor":1, 
->>>>>>> greenaccounts
             "Aldrin":17000000,
             "Anthracen":3.3, 
             "Arsen og arsenforbindelser (som As)":1500000,
             "Asbest":170000000, 
-<<<<<<< HEAD
             "Atrazin":56, 
             "Benzo(g,h,i)perylen":20000, 
             "Bly og blyforbindelser (som Pb)":18000,
@@ -266,70 +227,6 @@ dict_GHG={"Chlorfluorcarboner (CFC)":4750,
           "kuddioxid":1, 
           "Kuldioxid":1, 
           "Kuldioid (CO2)":1}
-=======
-            "Atrazin":1,"Benzen":200, 
-            "Benzo(g,h,i)perylen":1, 
-            "Bly og blyforbindelser (som Pb)":18000,
-            "Bromerede diphenylethere (PBDE)":1, 
-            "Cadmium og cadmiumforbindelser (som Cd)":2000,
-            "Chloralkaner, C10-C13":1, 
-            "Chlordan":350000,  
-            "Chlorfenvinfos":1,
-            "Chlorider (som total Cl)":1/2000000, 
-            "Chlorpyrifos":1, 
-            "Chrom og chromforbindelser (som Cr)":500000,
-            "Cyanider (som total CN)":1/50, 
-            "DDT":1, 
-            "Di-(2-ethylhexyl)phthalat (DEHP)":14000, 
-            "Dichlormethan (DCM)":2000,
-            "Diuron":1, 
-            "Endosulfan":1, 
-            "Ethylbenzen":1/200, 
-            "Ethylenoxid":220000,
-            "Fluoranthen":1, 
-            "Fluorider (som total F)":1/2000, 
-            "Halogenerede organiske forbindelser (som AOX)":1/1000,
-            "Heptachlor":4500000, 
-            "Hexachlorbenzen (HCB)":1600000, 
-            "Hexachlorbutadien (HCBD)":7800,
-            "Isodrin":1, "Isoproturon":1, 
-            "Kobber og kobberforbindelser (som Cu)":1/50, 
-            "Kviksølv og kviksølvforbindelser (som Hg)":1, 
-            "Lindan":1, 
-            "Mirex":1, 
-            "Naphthalen":1/10, 
-            "Nikkel og nikkelforbindelser (som Ni)":1/20, 
-            "Nonylphenol og nonylphenolethoxylater (NP/NPE)":1, 
-            "Octylphenoler og octylphenolethoxylater":1, 
-            "Organiske tinforbindelser(som total Sn)":1/50, 
-            "PCDD + PCDF (dioxiner + furaner) (som Teq)":1/0.0001, 
-            "Pentachlorbenzen":1, 
-            "Pentachlorphenol (PCP)":1, 
-            "Phenoler (som total C)":1/20, 
-            "Polychlorerede biphenyler (PCB)":1/0.1, 
-            "Polycykliske aromatiske kulbrinter (PAH)":1/5,
-            "Simazin":1, 
-            "Tetrachlorethylen (PER)":1/10,
-            "Tetrachlormethan (TCM)":1, 
-            "Toluen":1/200, 
-            "Total fosfor":1/5000, 
-            "Total kvælstof":1/50000, 
-            "Totalmængde organisk kulstof (TOC) (som total C eller COD/3)":1/50000, 
-            "Toxaphen":1, 
-            "Tributyltin og tributyltinforbindelser":1, 
-            "Trichlorbenzener (TCB) (alle isomere)":1,
-            "Trichlorethylen":1/10, 
-            "Trichlormethan":1/10, 
-            "Trifluralin":1, 
-            "Triphenyltin og triphenyltinforbindelser":1, 
-            "Vinylchlorid":1/10, 
-            "Xylener":1/200, 
-            "Zink og zinkforbindelser (som Zn)":1/100}
-
-#dictionary for GHG 
-dict_GHG={"Chlorfluorcarboner (CFC)":4750,"Dinitrogenoxid (N2O)":298, "Hydrochlorfluorcarboner (HCFC)":1810,
-                    "Hydrofluorcarboner (HFC)":1430, }
->>>>>>> greenaccounts
 
 
 
