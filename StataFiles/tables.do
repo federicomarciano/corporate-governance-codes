@@ -1333,7 +1333,7 @@ restore
 
 
 
-*Green Accounts-----------------------------------------------------------------
+/* *Green Accounts-----------------------------------------------------------------
 
 keep if air!=. 
 *number of firm-years and number of firms 
@@ -1408,7 +1408,20 @@ foreach i in positive negative neutral {
 sum `i'
 display r(sum)
 }
-restore 
+restore */
+preserve 
+keep if toxicity !=. 
+display(_N) 
+replace toxicity=toxicity/1400000000
+replace GHGs=GHGs/1000000
+estpost tabstat toxicity GHGs, statistics(mean sd min max) columns(statistics)
+collapse (mean) toxicity GHGs, by(year) 
+drop if year<2010
+line toxicity year, xtitle("Year") ytitle("Toxicity") xsc(r(2010 2019)) ylabel(,angle(0))  graphregion(color(white)) bgcolor(white)
+graph export "TablesAndGraphs\toxicity.png", as(png) name("Graph") replace
+line GHGs year, xtitle("Year") ytitle("GHGs") xsc(r(2010 2019)) ylabel(0(20)120, angle(0))  graphregion(color(white)) bgcolor(white)
+graph export "TablesAndGraphs\GHGs.png", as(png) name("Graph") replace
+restore
 
 *CORRELATIONS*******************************************************************
 local dir `c(pwd)'

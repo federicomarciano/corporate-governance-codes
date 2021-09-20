@@ -1,5 +1,5 @@
 ********************************************************************************
-* create.do   09\17\2021 *******************************************************
+* create.do   09\20\2021 *******************************************************
 ********************************************************************************
 /*
 
@@ -25,7 +25,7 @@ both CorporateGovernance_HeavyData and CorporateGoverance_Main
 *PRELIMINARIES******************************************************************
 clear all
 *!!!!!!!!!!!!!!!!!!INSETRT DIRECTORY!!!!!!!!!!!!********************************
-cd ""
+cd "C:\Users\Dell\Dropbox"
 ********************************************************************************
 set maxvar 10000
 
@@ -495,11 +495,10 @@ save CorporateGovernance_HeavyData\TempData\Temp_ISOdata.dta, replace
 
 *GREEN ACCOUNTS-----------------------------------------------------------------
 use CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010, clear 
-
-
+destring year, replace 
+gen num=_n
 /*find observations for which the cvr is missing and see if it is possible 
 to get it by hand */ 
-gen num=_n
 sort cvr_firm
 replace cvr_firm="71271919" if company_name=="Dallerupgård A/S" & year==2007
 replace cvr_firm="28036493" if company_name=="Simon Salling Syrik" & year==2007
@@ -554,7 +553,8 @@ drop if leng==1
 replace cvr_firm=substr(cvr_firm,1,8)
 bysort cvr_firm year (p_number): gen n_plants=_N 
 drop p_number 
-collapse (sum) air water_rec water_sew nhaz_waste_rec nhaz_waste_disp haz_waste_rec haz_waste_disp, by(cvr_firm year n_plants)
+gen toxicity = air + water_rec + water_sew 
+collapse (sum) toxicity GHGs, by(cvr_firm year n_plants)
 save CorporateGovernance_HeavyData\TempData\Temp_GreenAccounts.dta, replace 
 
 
@@ -593,7 +593,7 @@ merge m:1 cvr_firm year using CorporateGovernance_HeavyData\TempData\Temp_GreenA
 *which is equal to one will be dropped. 
 ******************************************************************************** 
 gen dropped = 0 
-replace dropped = 1 if (employees<10 & air==.) | (employees==. & air==. )
+replace dropped = 1 if (employees<10 & toxicity==.) | (employees==. & toxicity==. )
 bysort cvr_firm (year): egen s_dropped=sum(dropped)
 bysort cvr_firm (year): gen n_obs=_N
 drop if s_dropped == n_obs 
@@ -944,14 +944,6 @@ bysort cvr_firm (year): replace assets_growth_corr=100*log(assets_tot_corr[_n]/a
 
 
 
-*creating the dependent variables for environmental performance-----------------
-gen water=water_rec+water_sew
-gen waste_rec=haz_waste_rec/2 + nhaz_waste_rec/2000
-gen waste_disp=haz_waste_disp/2 + nhaz_waste_disp/2000
-
-
-
-
 *create labels for sectors------------------------------------------------------
 label define sectors 1 "Agriculture, hunting, forestry and fishing"/*
 */2 "forestry" /*
@@ -1089,13 +1081,15 @@ order nat_ultimate_owned gov_ultimate_owned priv_ultimate_owned listed_ultimate_
 */iso_environment_lim iso_production_lim iso_workenviro_lim iso_environment_gen iso_production_gen iso_workenviro_gen /*
 */ cum_rd gross_turnover KLratio TobinQ slack leverage return_K assets_tot /*
 */cum_rd_corr gross_turnover KLratio_corr TobinQ_corr slack_corr leverage_corr return_K_corr assets_tot_corr/*
-*/ air water_rec water_sew nhaz_waste_rec nhaz_waste_disp haz_waste_rec haz_waste_disp n_plants water waste_rec waste_disp, last 
+*/ toxicity GHGs, last 
 
 
 
 
 *SAVE***************************************************************************
 save CorporateGovernance_Main/DoFiles/CorporateGovernance_Master.dta, replace 
+
+
 
 
 
