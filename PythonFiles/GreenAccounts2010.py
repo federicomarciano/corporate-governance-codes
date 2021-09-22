@@ -197,6 +197,16 @@ dict_GHG={"Chlorfluorcarboner (CFC)":4750,
           "kuldioxid":1}
 
 
+#dictionary m^3
+dict_m3={
+    "Kuldioxid (CO2)":680,
+    "Co2":680, 
+    "CO2":680, 
+    "kuddioxid":680, 
+    "Kuldioxid":680, 
+    "Kuldioid (CO2)":680, 
+    "kuldioxid":680}
+
 
 
 #####routine###################################################################
@@ -254,13 +264,15 @@ for row in rows[4472:]:
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text
+         measure=substance.findAll("td")[3].text.strip()
          if name in list(dict_air.keys()):
              if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
+             if measure=="t": 
+                 value = value*1000
              position= list(dict_air.keys()).index(name)
              value=value*list(dict_air.values())[position]
              air=air + value 
@@ -271,6 +283,8 @@ for row in rows[4472:]:
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
+                 if measure=="t": 
+                     value = value*1000
                  position= list(dict_GHG.keys()).index(name)
                  value=value*list(dict_GHG.values())[position]
                  GHGs=GHGs + value 
@@ -298,6 +312,8 @@ for row in rows[4472:]:
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
+             if measure=="t": 
+                 value = value*1000
              position= list(dict_water.keys()).index(name)
              value=value*list(dict_water.values())[position]
              water_rec=water_rec + value 
@@ -326,6 +342,8 @@ for row in rows[4472:]:
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
+             if measure=="t": 
+                 value=value*1000
              position= list(dict_water.keys()).index(name)
              value=value*list(dict_water.values())[position]
              water_sew=water_sew + value 
