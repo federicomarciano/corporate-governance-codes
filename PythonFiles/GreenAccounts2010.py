@@ -230,7 +230,8 @@ dict_GHG={"Chlorfluorcarboner (CFC)":4750,
           "CO2":1, 
           "kuddioxid":1, 
           "Kuldioxid":1, 
-          "Kuldioid (CO2)":1}
+          "Kuldioid (CO2)":1, 
+          "kuldioxid":1}
 
 
 
@@ -247,7 +248,7 @@ rows=soup.find("tbody").findAll("tr")
 
 
 #loop
-for row in rows: 
+for row in rows[2:3]: 
 
 
 #initial page 
@@ -271,24 +272,22 @@ for row in rows:
 
 #emissions
  html=requests.get(url2).text
- soup=bs(html,features='html.parser')
- h4=soup.find("div", id="Body").findAll("h4") 
+ soup=bs(html,features='html.parser') 
  strange_list=""
-
-#air
+ 
+#air 
  if "Virksomheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår." in html: 
      air=0
      strange_air=0
      GHGs=0
  else:    
-     substances=h4[0].findNext("tbody").findAll("tr")
-     air=0 
+     air=0
      strange_air=0
      GHGs=0
+     body=soup.find("table", {"id":"UdledningTilLuftTabel"}).find("tbody")
+     substances=body.findAll("tr")
      for substance in substances: 
-         name=substance.findAll("td")[0].findNext("a").text 
-         if name=="": 
-             name=substance.findAll("td")[0].text.strip() 
+         name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
          if name.strip() in list(dict_air.keys()): 
              if value=='': 
@@ -305,70 +304,66 @@ for row in rows:
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             position= list(dict_GHG.keys()).index(name)
-             value=value*list(dict_GHG.values())[position]
-             GHGs=GHGs + value 
+                 position= list(dict_GHG.keys()).index(name)
+                 value=value*list(dict_GHG.values())[position]
+                 GHGs=GHGs + value 
          else: 
              strange_list=strange_list+name +" !!! "
              strange_air=strange_air+1
-            
-
-
-#water recipient  
+ 
+#water recipient 
  if "Virksomheden har ikke oplyst, at den har udledninger til vand (til recipient) for det pågældende regnskabsår." in html: 
      water_rec=0
      strange_water_rec=0
- else:    
-     substances=h4[1].findNext("tbody").findAll("tr")
+ else: 
      water_rec=0 
-     strange_water_rec=0
+     strange_water_rec=0 
+     body=soup.find("table", {"id":"UdledningTilVandRecipientTabel"}).find("tbody")
+     substances=body.findAll("tr")
      for substance in substances: 
-         name=substance.findAll("td")[0].findNext("a").text 
-         if name=="": 
-             name=substance.findAll("td")[0].text.strip() 
-         value=substance.findAll("td")[2].text.replace(",",".").strip()
+         name=substance.findNext("td").text.strip() 
+         value=substance.findAll("td")[2].text.replace(",",".")
          if name.strip() in list(dict_water.keys()): 
              if value=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             position= list(dict_water.keys()).index(name)
-             value=value*list(dict_water.values())[position]
-             water_rec=water_rec + value
+             position= list(dict_air.keys()).index(name)
+             value=value*list(dict_air.values())[position]
+             water_rec=water_rec + value 
          else: 
-             strange_list=strange_list+name+" !!! "
-             strange_water_rec=strange_water_rec+1 
+             strange_list=strange_list+name +" !!! "
+             strange_water_rec=strange_water_rec+1
 
-#water_sewer
- if "Virksomheden har ikke oplyst, at den har udledninger til vand (via kloak) for det pågældende regnskabsår." in html: 
+
+#water sewer 
+ if "Virksomheden har ikke oplyst, at den har udledninger til vand (til recipient) for det pågældende regnskabsår." in html: 
      water_sew=0
      strange_water_sew=0
- else:    
-     substances=h4[2].findNext("tbody").findAll("tr")
+ else: 
      water_sew=0 
-     strange_water_sew=0
+     strange_water_sew=0 
+     body=soup.find("table", {"id":"UdledningTilVandKloakTabel"}).find("tbody")
+     substances=body.findAll("tr")
      for substance in substances: 
-         name=substance.findAll("td")[0].findNext("a").text 
-         if name=="": 
-             name=substance.findAll("td")[0].text.strip() 
-         value=substance.findAll("td")[2].text.replace(",",".").strip() 
+         name=substance.findNext("td").text.strip() 
+         value=substance.findAll("td")[2].text.replace(",",".")
          if name.strip() in list(dict_water.keys()): 
              if value=='': 
                  value=0
                  print('!!!!MISSING!!!!')
-             else:
+             else: 
                  value=float(value)
-             position= list(dict_water.keys()).index(name)
-             value=value*list(dict_water.values())[position]
-             water_sew=water_rec + value
-         else:
-             strange_list=strange_list+name+" !!! "
-             strange_water_sew=strange_water_sew+1 
+             position= list(dict_air.keys()).index(name)
+             value=value*list(dict_air.values())[position]
+             water_sew=water_sew + value 
+         else: 
+             strange_list=strange_list+name +" !!! "
+             strange_water_sew=strange_water_sew+1
 
 
-
-
+"""
 #add a row 
  values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
                 'year':year, 'air':air, 'GHGs':GHGs, 'strange_air':strange_air,
@@ -384,3 +379,4 @@ for row in rows:
 writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
 df.to_excel(writer, index=False)
 writer.save()
+"""
