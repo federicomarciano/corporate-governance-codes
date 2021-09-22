@@ -11,7 +11,7 @@
 ###############################################################################
 
 
-
+#YOU NNED TO DO NUMBER 3990!!!!!!!!!!!!!!!
 
 
 #####PRELIMINARIES#############################################################
@@ -25,12 +25,12 @@ import pandas as pd
 
 #define the dataset
 df = pd.DataFrame(columns=['company_name', 'cvr_firm', 'p_number','year', 'air', 'GHGs','strange_air', 'water_rec', 'strange_water_rec',
-                           'water_sew', 'strange_water_sew', 'strange_list'])
+                           'water_sew', 'strange_water_sew', 'strange_list', 'measure_list'])
 
 
 #dictionary for air emission toxicity weights
 dict_air={"1,1,1-trichlorethan":0.7, 
-          "1,1,2,2-tetrachlorethan":2600, 
+          "1,1,2,2-tetrachlorethan":210000, 
           "1,2,3,4,5,6-hexachlorcyclohexan(HCH)":6400000,
           "1,2-dichlorethan (EDC)":93000, 
           "Aldrin":18000000, 
@@ -38,6 +38,7 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Anthracen":3.3, 
           "Arsen og arsenforbindelser (som As)":15000000, 
           "Asbest":170000000, 
+          "Benzo(g,h,i)perylen":20000,
           "Bly og blyforbindelser (som Pb)":23000,
           "Cadmium og cadmiumforbindelser (som Cd)":6400000,
           "Chlordan":360000,
@@ -67,6 +68,7 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Trichlormethan":82000, 
           "Vinylchlorid":31000, 
           "Zink og zinkforbindelser (som Zn)":100,
+          "hch":6400000, 
           "Benzen":28000, 
           "Flour og uorganiske flourforbindelser":17, 
           "Bly":23000, 
@@ -92,32 +94,11 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Tungmetaller (hovedsagelig zink)": 100
           }
 
-dict_air_nP={"hch":180,  
-          "Calcium":4400, 
-          "K (Kalium)":500000,
-          "Nitratforbindelser":0.63, 
-          "Thalium":14000, 
-          "Saltsyre":180, 
-          "cobalt":17000000, 
-          "selen":180, 
-          "Molybdæn":15000, 
-          "Mn":12000,
-          "Styren":3.5, 
-          "Vanadium":140, 
-          "Be":8600000, 
-          "HCl":180, 
-          "cobolt":17000000,
-          "Sølv (Ag)":200,
-          "Formaldehyd":46000, 
-          "HF":250, 
-          "Sb":12000, 
-          "Antimon":12000, 
-          "Kobolt (som Co)":17000000, 
-          "V":140}
 
 
 #dictionary for water emission toxicity weights
 dict_water={"1,2-dichlorethan (EDC)":91000, 
+            "1,2,3,4,5,6-hexachlorcyclohexan(HCH)":6300000,
             "Alachlor":80000, 
             "Aldrin":17000000,
             "Anthracen":3.3, 
@@ -165,7 +146,7 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Xylener":5, 
             "Zink og zinkforbindelser (som Zn)":3.3, 
             "Benzen":55000, 
-            "hch":180, 
+            "hch":6300000, 
             "Total fosfor  (tot-P)":50000, 
             "Bly":18000, 
             "Toluol":13, 
@@ -197,24 +178,6 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Tungmetaller (hovedsagelig zink)":3.3 
             }
 
-dict_water_nP= {"Calcium":1000, 
-            "K (Kalium)":500000, 
-            "Nitratforbindelser":0.63, 
-            "Thalium":14000, 
-            "Saltsyre":180,
-            "selen":200, 
-            "Molybdæn":380, 
-            "Mn":7.1, 
-            "Styren":5, 
-            "Vanadium":140, 
-            "Be":500, 
-            "HCl":180, 
-            "Sølv (Ag)":200, 
-            "Formaldehyd":5, 
-            "HF":25, 
-            "Sb":2500, 
-            "Antimon":2500, 
-            "V":140}
 
 #dictionary for GHG 
 dict_GHG={"Chlorfluorcarboner (CFC)":4750,
@@ -248,7 +211,7 @@ rows=soup.find("tbody").findAll("tr")
 
 
 #loop
-for row in rows[2:3]: 
+for row in rows[4472:]: 
 
 
 #initial page 
@@ -272,8 +235,10 @@ for row in rows[2:3]:
 
 #emissions
  html=requests.get(url2).text
- soup=bs(html,features='html.parser') 
+ soup=bs(html,features='html.parser')
+ measure_list="" 
  strange_list=""
+ 
  
 #air 
  if "Virksomheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår." in html: 
@@ -289,8 +254,9 @@ for row in rows[2:3]:
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         if name.strip() in list(dict_air.keys()): 
-             if value=='': 
+         measure=substance.findAll("td")[3].text
+         if name in list(dict_air.keys()):
+             if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
@@ -298,8 +264,9 @@ for row in rows[2:3]:
              position= list(dict_air.keys()).index(name)
              value=value*list(dict_air.values())[position]
              air=air + value 
-         elif name.strip() in list(dict_GHG.keys()): 
-             if value=='': 
+             measure_list=measure_list+name+" ("+measure+")" + " !!! "
+         elif name in list(dict_GHG.keys()): 
+             if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
@@ -307,8 +274,9 @@ for row in rows[2:3]:
                  position= list(dict_GHG.keys()).index(name)
                  value=value*list(dict_GHG.values())[position]
                  GHGs=GHGs + value 
+             measure_list=measure_list+name+" ("+measure+")" + " !!! "
          else: 
-             strange_list=strange_list+name +" !!! "
+             strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_air=strange_air+1
  
 #water recipient 
@@ -323,22 +291,24 @@ for row in rows[2:3]:
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         if name.strip() in list(dict_water.keys()): 
-             if value=='': 
+         measure=substance.findAll("td")[3].text
+         if name in list(dict_water.keys()): 
+             if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             position= list(dict_air.keys()).index(name)
-             value=value*list(dict_air.values())[position]
+             position= list(dict_water.keys()).index(name)
+             value=value*list(dict_water.values())[position]
              water_rec=water_rec + value 
+             measure_list=measure_list+name+" ("+measure+")" + " !!! "
          else: 
-             strange_list=strange_list+name +" !!! "
+             strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_water_rec=strange_water_rec+1
 
 
 #water sewer 
- if "Virksomheden har ikke oplyst, at den har udledninger til vand (til recipient) for det pågældende regnskabsår." in html: 
+ if "Virksomheden har ikke oplyst, at den har udledninger til vand (via kloak) for det pågældende regnskabsår." in html: 
      water_sew=0
      strange_water_sew=0
  else: 
@@ -349,27 +319,29 @@ for row in rows[2:3]:
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         if name.strip() in list(dict_water.keys()): 
-             if value=='': 
+         measure=substance.findAll("td")[3].text
+         if name in list(dict_water.keys()): 
+             if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             position= list(dict_air.keys()).index(name)
-             value=value*list(dict_air.values())[position]
+             position= list(dict_water.keys()).index(name)
+             value=value*list(dict_water.values())[position]
              water_sew=water_sew + value 
+             measure_list=measure_list+name+" ("+measure+")" + " !!! "
          else: 
-             strange_list=strange_list+name +" !!! "
+             strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_water_sew=strange_water_sew+1
 
 
-"""
+
 #add a row 
  values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
                 'year':year, 'air':air, 'GHGs':GHGs, 'strange_air':strange_air,
                 'water_rec':water_rec, 'strange_water_rec':strange_water_rec, 
                 'water_sew':water_sew, 'strange_water_sew':strange_water_sew, 
-                'strange_list':strange_list}
+                'strange_list':strange_list, 'measure_list':measure_list}
  row_to_add=pd.Series(values_to_add)
  df=df.append(row_to_add, ignore_index=True)
  print(num)
@@ -379,4 +351,3 @@ for row in rows[2:3]:
 writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
 df.to_excel(writer, index=False)
 writer.save()
-"""
