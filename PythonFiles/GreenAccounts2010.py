@@ -1,5 +1,5 @@
 ###############################################################################
-#GreenAccounts.py 11/08/2021 ##################################################
+#GreenAccounts.py 09/20/2021 ##################################################
 ###############################################################################
 #
 # AIM: collect data on green accounts from EPA's website
@@ -87,7 +87,9 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Kobber":1500, 
           "Zinkstøv":100, 
           "Cadmium":6400000, 
-          "Støv fra zinkgryde":100
+          "Støv fra zinkgryde":100, 
+          "kobber":1500, 
+          "Tungmetaller (hovedsagelig zink)": 100
           }
 
 dict_air_nP={"hch":180,  
@@ -190,7 +192,9 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Total P":50000, 
             "Zinkstøv":3.3, 
             "Cadmium":2000,
-            "Støv fra zinkgryde":3.3
+            "Støv fra zinkgryde":3.3, 
+            "kobber":1500, 
+            "Tungmetaller (hovedsagelig zink)":3.3 
             }
 
 dict_water_nP= {"Calcium":1000, 
@@ -305,7 +309,7 @@ for row in rows:
              value=value*list(dict_GHG.values())[position]
              GHGs=GHGs + value 
          else: 
-             strange_list=strange_list+name +", "
+             strange_list=strange_list+name +" !!! "
              strange_air=strange_air+1
             
 
@@ -333,7 +337,7 @@ for row in rows:
              value=value*list(dict_water.values())[position]
              water_rec=water_rec + value
          else: 
-             strange_list=strange_list+name+", "
+             strange_list=strange_list+name+" !!! "
              strange_water_rec=strange_water_rec+1 
 
 #water_sewer
@@ -359,7 +363,7 @@ for row in rows:
              value=value*list(dict_water.values())[position]
              water_sew=water_rec + value
          else:
-             strange_list=strange_list+name+", "
+             strange_list=strange_list+name+" !!! "
              strange_water_sew=strange_water_sew+1 
 
 
@@ -375,7 +379,7 @@ for row in rows:
  df=df.append(row_to_add, ignore_index=True)
  print(num)
  
- 
+
 #save
 writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
 df.to_excel(writer, index=False)
