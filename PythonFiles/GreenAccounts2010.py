@@ -14,6 +14,9 @@
 #start from number 285. 
 
 
+
+
+
 #####PRELIMINARIES#############################################################
 
 
@@ -25,7 +28,7 @@ import pandas as pd
 
 #define the dataset
 df = pd.DataFrame(columns=['company_name', 'cvr_firm', 'p_number','year', 'air', 'GHGs','strange_air', 'water_rec', 'strange_water_rec',
-                           'water_sew', 'strange_water_sew', 'strange_list', 'measure_list'])
+                           'water_sew', 'strange_water_sew', 'strange_list', 'measure_list', 'problems'])
 
 
 #dictionary for air emission toxicity weights
@@ -123,7 +126,10 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Sb, As, Pb, Cr,Co, Cu, Mn, Ni, V, Hg":43000000, 
           "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":43000000, 
           "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb og V":43000000, 
-          "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000
+          "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000, 
+          "Fluor og uorganiske fluorforbindelser (som HF":17, 
+          "HF":17, 
+          "hf":17, 
           }
 
 
@@ -275,7 +281,12 @@ dict_l={"Kobber og kobberforbindelser":8940}
 
 
 
+
+
 #####routine###################################################################
+
+
+
 
 
 #initialize  
@@ -286,8 +297,14 @@ soup=bs(html,features='html.parser')
 rows=soup.find("tbody").findAll("tr")
 
 
+
+
+
 #loop
-for row in rows[4472:]: 
+for row in rows[180:190]: 
+
+
+
 
 
 #initial page 
@@ -301,6 +318,9 @@ for row in rows[4472:]:
  url3=base+"/Virksomhed/UdledningOgAffald/"+identifier 
 
 
+
+
+
 #company details 
  html=requests.get(url1).text
  soup=bs(html,features='html.parser') 
@@ -309,13 +329,19 @@ for row in rows[4472:]:
  p_number=div.find("label").findNext("label").findNext("label").next_sibling 
 
 
+
+
+
 #emissions
  html=requests.get(url2).text
  soup=bs(html,features='html.parser')
  measure_list="" 
  strange_list=""
+ problems=0
  
- 
+
+
+
 #air 
  if "Virksomheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår." in html: 
      air=0
@@ -327,38 +353,94 @@ for row in rows[4472:]:
      GHGs=0
      body=soup.find("table", {"id":"UdledningTilLuftTabel"}).find("tbody")
      substances=body.findAll("tr")
+     
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text.strip()
+         measure=substance.findAll("td")[3].text.strip().lower()
+         
+         
+         
+         #health hazardous pollutants 
          if name in list(dict_air.keys()):
+             
+             
+             #see if the value is missing 
              if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             if measure=="t": 
-                 value = value*1000
-             position= list(dict_air.keys()).index(name)
+                 
+             
+             #see if the measure is kilograms 
+             if measure.startswith("t"): 
+                 value = value*1000             
+             elif measure.startswith("kg"): 
+                 value = value            
+             elif measure.startswith("m"): 
+                 if name in list(dict_m3.keys()): 
+                     position=list(dict_m3.keys()).index(name)
+                     value=value*list(dict_m3.values())[position]
+             elif measure.startswith("l"): 
+                 value=value
+             else: 
+                 value=value 
+                 problems=problems+1
+                 print("problem")
+             
+             #toxicity weight        
+             position=list(dict_air.keys()).index(name)
              value=value*list(dict_air.values())[position]
              air=air + value 
              measure_list=measure_list+name+" ("+measure+")" + " !!! "
+             
+             
+             
+        #GHG 
          elif name in list(dict_GHG.keys()): 
+             
+             
+             #see if the value is missing 
              if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-                 if measure=="t": 
-                     value = value*1000
-                 position= list(dict_GHG.keys()).index(name)
-                 value=value*list(dict_GHG.values())[position]
-                 GHGs=GHGs + value 
+                 
+                 
+            #see if the measure is kilogram
+             if measure.startswith("t"): 
+                 value = value*1000             
+             elif measure.startswith("kg"): 
+                 value = value            
+             elif measure.startswith("m"): 
+                 if name in list(dict_m3.keys()): 
+                     position=list(dict_m3.keys()).index(name)
+                     value=value*list(dict_m3.values())[position]
+             elif measure.startswith("l"): 
+                 value=value
+             else: 
+                 value=value 
+                 problems=problems+1   
+                 print("problem")
+                 
+            #toxicity weight 
+             position= list(dict_GHG.keys()).index(name)
+             value=value*list(dict_GHG.values())[position]
+             GHGs=GHGs + value 
              measure_list=measure_list+name+" ("+measure+")" + " !!! "
+             
+             
+             
+        #record the substance and its measure if it is not in the list of air or GHG 
          else: 
              strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_air=strange_air+1
  
+
+
+
 #water recipient 
  if "Virksomheden har ikke oplyst, at den har udledninger til vand (til recipient) for det pågældende regnskabsår." in html: 
      water_rec=0
@@ -368,25 +450,53 @@ for row in rows[4472:]:
      strange_water_rec=0 
      body=soup.find("table", {"id":"UdledningTilVandRecipientTabel"}).find("tbody")
      substances=body.findAll("tr")
+     
+     
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text
+         measure=substance.findAll("td")[3].text.strip().lower()
+         
          if name in list(dict_water.keys()): 
+             
+             #see if the value is 0 
              if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             if measure=="t": 
-                 value = value*1000
+
+            
+             #see if the measure is kilogram
+             if measure.startswith("t"): 
+                 value = value*1000             
+             elif measure.startswith("kg"): 
+                 value = value            
+             elif measure.startswith("m"): 
+                 if name in list(dict_m3.keys()): 
+                     position=list(dict_m3.keys()).index(name)
+                     value=value*list(dict_m3.values())[position]
+             elif measure.startswith("l"): 
+                 value=value
+             else: 
+                 value=value 
+                 problems=problems+1  
+                 print("problem")
+               
+                
+             #toxicity weight 
              position= list(dict_water.keys()).index(name)
              value=value*list(dict_water.values())[position]
              water_rec=water_rec + value 
              measure_list=measure_list+name+" ("+measure+")" + " !!! "
+             
+             
+         #record the substance if it is not in PRTR 
          else: 
              strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_water_rec=strange_water_rec+1
+
+
 
 
 #water sewer 
@@ -398,22 +508,43 @@ for row in rows[4472:]:
      strange_water_sew=0 
      body=soup.find("table", {"id":"UdledningTilVandKloakTabel"}).find("tbody")
      substances=body.findAll("tr")
+     
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
          value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text
+         measure=substance.findAll("td")[3].text.strip().lower()
+         
+         #see if the value is missing 
          if name in list(dict_water.keys()): 
              if value.strip()=='': 
                  value=0
                  print('!!!!MISSING!!!!')
              else: 
                  value=float(value)
-             if measure=="t": 
-                 value=value*1000
+             
+            #see if the measure is kilogram
+             if measure.startswith("t"): 
+                 value = value*1000             
+             elif measure.startswith("kg"): 
+                 value = value            
+             elif measure.startswith("m"): 
+                 if name in list(dict_m3.keys()): 
+                     position=list(dict_m3.keys()).index(name)
+                     value=value*list(dict_m3.values())[position]
+             elif measure.startswith("l"): 
+                 value=value
+             else: 
+                 value=value 
+                 problems=problems+1  
+                 print("problem")   
+                 
+             #toxicity weight 
              position= list(dict_water.keys()).index(name)
              value=value*list(dict_water.values())[position]
              water_sew=water_sew + value 
              measure_list=measure_list+name+" ("+measure+")" + " !!! "
+             
+        #record the strange substance 
          else: 
              strange_list=strange_list+name+" ("+measure+")" + " !!! "
              strange_water_sew=strange_water_sew+1
@@ -425,13 +556,14 @@ for row in rows[4472:]:
                 'year':year, 'air':air, 'GHGs':GHGs, 'strange_air':strange_air,
                 'water_rec':water_rec, 'strange_water_rec':strange_water_rec, 
                 'water_sew':water_sew, 'strange_water_sew':strange_water_sew, 
-                'strange_list':strange_list, 'measure_list':measure_list}
+                'strange_list':strange_list, 'measure_list':measure_list, 'problems':problems}
  row_to_add=pd.Series(values_to_add)
  df=df.append(row_to_add, ignore_index=True)
  print(num)
  
-
+"""
 #save
 writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
 df.to_excel(writer, index=False)
 writer.save()
+"""
