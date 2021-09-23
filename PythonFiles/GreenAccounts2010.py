@@ -11,7 +11,7 @@
 ###############################################################################
 
 
-#start from number 285. 
+
 
 
 
@@ -301,11 +301,7 @@ rows=soup.find("tbody").findAll("tr")
 
 
 #loop
-for row in rows[180:190]: 
-
-
-
-
+for row in rows: 
 
 #initial page 
  num=row.find("td").text
@@ -317,20 +313,12 @@ for row in rows[180:190]:
  url2=base+"/Virksomhed/UdledningOgAffald/"+identifier 
  url3=base+"/Virksomhed/UdledningOgAffald/"+identifier 
 
-
-
-
-
 #company details 
  html=requests.get(url1).text
  soup=bs(html,features='html.parser') 
  div=soup.find("div", {"class":"VirksomhedsDetaljerStamdata"}) 
  cvr_firm=div.find("label").findNext("label").next_sibling 
  p_number=div.find("label").findNext("label").findNext("label").next_sibling 
-
-
-
-
 
 #emissions
  html=requests.get(url2).text
@@ -339,9 +327,6 @@ for row in rows[180:190]:
  strange_list=""
  problems=0
  
-
-
-
 #air 
  if "Virksomheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår." in html: 
      air=0
@@ -382,6 +367,10 @@ for row in rows[180:190]:
                  if name in list(dict_m3.keys()): 
                      position=list(dict_m3.keys()).index(name)
                      value=value*list(dict_m3.values())[position]
+                 else: 
+                     value=value 
+                     print("problem")
+                     problems=problems+1
              elif measure.startswith("l"): 
                  value=value
              else: 
@@ -418,6 +407,10 @@ for row in rows[180:190]:
                  if name in list(dict_m3.keys()): 
                      position=list(dict_m3.keys()).index(name)
                      value=value*list(dict_m3.values())[position]
+                 else: 
+                     value=value 
+                     print("problem")
+                     problems=problems+1
              elif measure.startswith("l"): 
                  value=value
              else: 
@@ -476,6 +469,10 @@ for row in rows[180:190]:
                  if name in list(dict_m3.keys()): 
                      position=list(dict_m3.keys()).index(name)
                      value=value*list(dict_m3.values())[position]
+                 else: 
+                     value=value 
+                     print("problem")
+                     problems=problems+1
              elif measure.startswith("l"): 
                  value=value
              else: 
@@ -531,6 +528,10 @@ for row in rows[180:190]:
                  if name in list(dict_m3.keys()): 
                      position=list(dict_m3.keys()).index(name)
                      value=value*list(dict_m3.values())[position]
+                 else: 
+                     value=value 
+                     print("problem")
+                     problems=problems+1
              elif measure.startswith("l"): 
                  value=value
              else: 
@@ -561,9 +562,8 @@ for row in rows[180:190]:
  df=df.append(row_to_add, ignore_index=True)
  print(num)
  
-"""
+
 #save
 writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
 df.to_excel(writer, index=False)
 writer.save()
-"""
