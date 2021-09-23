@@ -92,7 +92,7 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Støv fra zinkgryde":100, 
           "kobber":1500, 
           "Tungmetaller (hovedsagelig zink)": 100, 
-          "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":15000000, 
+          "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":43000000, 
           "Sum (pb, cr, cu mv.)":43000000,
           "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb, V":43000000, 
           "Sb, As, Pb, Cr,Co, Cu, Mn, Ni, V, Hg":43000000, 
@@ -107,7 +107,23 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000, 
           "Cd+As+Ni+Cr":43000000, 
           "Sum (Cd, TI)":6400000, 
-          "Cd+Tl":6400000
+          "Cd+Tl":6400000, 
+          "Sum (pb, cr, cu mv.)":43000000, 
+          "Cadmium og thallium":6400000, 
+          "Hg+Cd":6400000, 
+          "Cd+Hg":6400000, 
+          "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V+Sn":43000000, 
+          "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":43000000,
+          "Kobber og kobberforbindelser":1500, 
+          "Pb+Cr+Cu+Mn":43000000, 
+          "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V+Sn":43000000, 
+          "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V":43000000, 
+          "Ni+As":15000000, 
+          "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb, V":43000000, 
+          "Sb, As, Pb, Cr,Co, Cu, Mn, Ni, V, Hg":43000000, 
+          "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":43000000, 
+          "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb og V":43000000, 
+          "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000
           }
 
 
@@ -204,7 +220,23 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Sb+As+Pb+Cr+Cu+Mn+Ni+V":1500000, 
             "Cd+As+Ni+Cr":1500000, 
             "Sum (Cd, TI)":2000, 
-            "Cd+Tl":2000
+            "Cd+Tl":2000, 
+            "Sum (pb, cr, cu mv.)":500000, 
+            "Cadmium og thallium":2000, 
+            "Hg+Cd":10000, 
+            "Cd+Hg":10000, 
+            "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V+Sn":1500000, 
+            "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":1500000, 
+            "Kobber og kobberforbindelser":1500, 
+            "Pb+Cr+Cu+Mn":500000, 
+            "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V+Sn":1500000, 
+            "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V":1500000, 
+            "Ni+As":1500000, 
+            "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb, V":1500000, 
+            "Sb, As, Pb, Cr,Co, Cu, Mn, Ni, V, Hg":1500000, 
+            "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":1500000, 
+            "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb og V":1500000, 
+            "Sb+As+Pb+Cr+Cu+Mn+Ni+V":1500000, 
             }
 
 
@@ -237,6 +269,9 @@ dict_m3={
     "Kuldioxid":680, 
     "Kuldioid (CO2)":680, 
     "kuldioxid":680}
+
+#dictinary l
+dict_l={"Kobber og kobberforbindelser":8940}
 
 
 
