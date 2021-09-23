@@ -11,7 +11,7 @@
 ###############################################################################
 
 
-#YOU NNED TO DO NUMBER 3990!!!!!!!!!!!!!!!
+#start from number 285. 
 
 
 #####PRELIMINARIES#############################################################
@@ -91,7 +91,23 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Cadmium":6400000, 
           "Støv fra zinkgryde":100, 
           "kobber":1500, 
-          "Tungmetaller (hovedsagelig zink)": 100
+          "Tungmetaller (hovedsagelig zink)": 100, 
+          "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":15000000, 
+          "Sum (pb, cr, cu mv.)":43000000,
+          "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb, V":43000000, 
+          "Sb, As, Pb, Cr,Co, Cu, Mn, Ni, V, Hg":43000000, 
+          "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V+Sn": 43000000, 
+          "Pb+Cr+Cu+Mn":43000000, 
+          "Sb,As,Pb,Cr,Co,Cu,Mn,Ni,V,Hg":43000000,
+          "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V":43000000,
+          "Sum af tungmetallerne CD og Tl":6400000, 
+          "Ammoniak/ammonium":7, 
+          "Sum af tungmetallerne Cd og Ti":6400000, 
+          "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":43000000, 
+          "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000, 
+          "Cd+As+Ni+Cr":43000000, 
+          "Sum (Cd, TI)":6400000, 
+          "Cd+Tl":6400000
           }
 
 
@@ -175,7 +191,20 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Cadmium":2000,
             "Støv fra zinkgryde":3.3, 
             "kobber":1500, 
-            "Tungmetaller (hovedsagelig zink)":3.3 
+            "Tungmetaller (hovedsagelig zink)":3.3, 
+            "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":1500000, 
+            "Sum (pb, cr, cu mv.)": 500000,
+            "Cyan":200, 
+            "Pb+Cr+Cu+Mn":500000, 
+            "Sb,As,Pb,Cr,Co,Cu,Mn,Ni,V,Hg": 1500000, 
+            "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V":1500000, 
+            "Sum af tungmetallerne CD og Tl":2000, 
+            "Sum af tungmetallerne Cd og Ti":2000, 
+            "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":1500000, 
+            "Sb+As+Pb+Cr+Cu+Mn+Ni+V":1500000, 
+            "Cd+As+Ni+Cr":1500000, 
+            "Sum (Cd, TI)":2000, 
+            "Cd+Tl":2000
             }
 
 
@@ -194,7 +223,9 @@ dict_GHG={"Chlorfluorcarboner (CFC)":4750,
           "kuddioxid":1, 
           "Kuldioxid":1, 
           "Kuldioid (CO2)":1, 
-          "kuldioxid":1}
+          "kuldioxid":1, 
+          "Kuldioxid (CO2) ifm. Naturgas":1, 
+          "Kuldioxid (CO2) ifm. El":1}
 
 
 #dictionary m^3

@@ -11,7 +11,7 @@ def comma(word):
     output=str(word)
     return output 
 
-df['strange_list']=df['measure_list'].apply(comma)
+df['strange_list']=df['strange_list'].apply(comma)
 
 string=''.join(df.strange_list)
 li=string.split(" !!! ")
