@@ -260,7 +260,8 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "Pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":1500000, 
             "Pb+Cr+Cu":500000, 
             "Cd, Ti":2000, 
-            "Sølv+Crom+Kobber":500000
+            "Sølv+Crom+Kobber":500000, 
+            "Fenol":3.3
             }
 
 
@@ -317,7 +318,7 @@ rows=soup.find("tbody").findAll("tr")
 
 
 
-
+#4555
 #loop
 for row in rows: 
 

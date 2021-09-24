@@ -9,6 +9,7 @@ def comma(word):
     if word=="nan": 
         word = ""
     output=str(word)
+    output=output.lower()
     return output 
 
 df['strange_list']=df['strange_list'].apply(comma)
