@@ -130,6 +130,16 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Fluor og uorganiske fluorforbindelser (som HF":17, 
           "HF":17, 
           "hf":17, 
+          "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V": 43000000, 
+          "Nikkel+Arsen+Cadmium+Kviksølv+Bly+Chrom+Kobber+Mangan":43000000, 
+          "Hydrogenflourid":17,
+          "Cd,Ti":6400000, 
+          "cd + Tl":6400000,
+          "Pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":43000000, 
+          "Pb+Cr+Cu":43000000, 
+          "Cd, Ti":6400000, 
+          "Sølv+Crom+Kobber":43000000, 
+          "hydrogen fluorid":17
           }
 
 
@@ -243,6 +253,14 @@ dict_water={"1,2-dichlorethan (EDC)":91000,
             "pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":1500000, 
             "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb og V":1500000, 
             "Sb+As+Pb+Cr+Cu+Mn+Ni+V":1500000, 
+            "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V":1500000, 
+            "Nikkel+Arsen+Cadmium+Kviksølv+Bly+Chrom+Kobber+Mangan":1500000, 
+            "Cd,Ti":2000, 
+            "cd + Tl":2000, 
+            "Pb+Cr+Cu+Mn+Ni+As+Sb+Co+V":1500000, 
+            "Pb+Cr+Cu":500000, 
+            "Cd, Ti":2000, 
+            "Sølv+Crom+Kobber":500000
             }
 
 
