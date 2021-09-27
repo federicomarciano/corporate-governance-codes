@@ -13,10 +13,13 @@ def comma(word):
     return output 
 
 df['strange_list']=df['strange_list'].apply(comma)
-
 string=''.join(df.strange_list)
 li=string.split(" !!! ")
-se=set(li)
+lis=[]
+for word in li: 
+        if "vand" in word: 
+            lis.append(word)
+se=set(lis)
 n=0
 for i in se: 
        n=n+1
