@@ -1,5 +1,5 @@
 ********************************************************************************
-*tables.do 21/07/2021 **********************************************************
+*tables.do 09/28/2021 **********************************************************
 ********************************************************************************
 /*
 Aim: this code produces the tables and pictures related to the master dataset of the 
@@ -1409,19 +1409,84 @@ sum `i'
 display r(sum)
 }
 restore */
+clear all
+local dir `c(pwd)'
+cd "`dir'"
+use CorporateGovernance_Master.dta, clear
+
+*sample size 
+
+
+
+*summary statistics 
 preserve 
 keep if toxicity !=. 
 display(_N) 
 replace toxicity=toxicity/1400000000
+label variable toxicity "Toxicity"
 replace GHGs=GHGs/1000000
-estpost tabstat toxicity GHGs, statistics(mean sd min max) columns(statistics)
-collapse (mean) toxicity GHGs, by(year) 
-drop if year<2010
-line toxicity year, xtitle("Year") ytitle("Toxicity") xsc(r(2010 2019)) ylabel(,angle(0))  graphregion(color(white)) bgcolor(white)
+estpost tabstat toxicity toxicity_water GHGs, statistics(mean sd min max) columns(statistics)
+collapse (mean) toxicity toxicity_water GHGs, by(year) 
+drop if year<2007
+line toxicity year, xtitle("Year") ytitle("Toxicity") xsc(r(2007 2019)) xlabel(2007(1)2019, angle(90)) ylabel(,angle(0))  graphregion(color(white)) bgcolor(white)
 graph export "TablesAndGraphs\toxicity.png", as(png) name("Graph") replace
-line GHGs year, xtitle("Year") ytitle("GHGs") xsc(r(2010 2019)) ylabel(0(20)120, angle(0))  graphregion(color(white)) bgcolor(white)
+line GHGs year, xtitle("Year") ytitle("GHGs") xsc(r(2010 2019)) xlabel(2007(1)2019, angle(90)) ylabel(0(20)120, angle(0))  graphregion(color(white)) bgcolor(white)
 graph export "TablesAndGraphs\GHGs.png", as(png) name("Graph") replace
 restore
+
+
+*top polluting toxicity 
+preserve 
+drop if toxicity==. 
+gsort year -toxicity 
+by year: gen num=_n 
+drop if num>3
+keep cvr_firm year toxicity 
+replace toxicity=toxicity/1400000000
+export excel TablesAndGraphs/toppoluting_toxicity, replace 
+drop cvr_firm
+dataout, save(TablesAndGraphs/toppoluting_toxicity) replace tex
+restore 
+
+
+*top polluitng GHgs 
+preserve 
+drop if toxicity==. 
+gsort year -GHGs 
+by year: gen num=_n 
+drop if num>3
+keep cvr_firm year GHGs 
+replace GHGs=GHGs/1000000
+export excel TablesAndGraphs/toppoluting_ghg, replace 
+drop cvr_firm
+dataout, save(TablesAndGraphs/toppoluting_ghg) replace tex
+
+restore 
+
+*top reducing 
+preserve 
+drop if toxicity==. 
+gsort year -toxicity 
+by year: gen num=_n 
+gen top_t=1 if num<4
+replace toxicity=toxicity/1400000000
+gsort year -GHGs
+by year: gen num2=_n 
+gen top_g=1 if num2 <4 
+replace GHGs=GHGs/1000000 
+bysort cvr_firm(year): egen t=sum(top_t)
+bysort cvr_firm(year): egen g=sum(top_g)
+drop if t==0 & g==0
+bysort cvr_firm (year): gen dif_toc=toxicity[_N]-toxicity[1]
+bysort cvr_firm (year): gen dif_g=GHGs[_N]-GHGs[1]
+bysort cvr_firm (year): drop if _n!=1 & _n!=_N 
+keep cvr_firm year dif_toc dif_g t g 
+drop if t==0 
+sort dif_t
+restore 
+
+
+
 
 *CORRELATIONS*******************************************************************
 local dir `c(pwd)'
