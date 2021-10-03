@@ -32,9 +32,19 @@ df = pd.DataFrame(columns=['company_name', 'cvr_firm', 'p_number','year', 'air',
 
 
 #dictionary for air emission toxicity weights
-dict_air={"1,2-dichlorethan (EDC)":1.07158410599566*0.000001,
+dict_air={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000366095266066354,
+          "hch":0.0000366095266066354,
+          
+          "1,1,2,2-tetrachlorethan":2.24779603704264*0.000001,
+          
+          "1,1,1-trichlorethan":3.61446311352547*0.00000001,
+    
+    
+          "1,2-dichlorethan (EDC)":1.07158410599566*0.000001,
      
           "Aldrin":0.0000206732426546541,
+          
+          "Anthracen":4.96240490662358*0.000001,
     
           "Andre flygtige organiske forbindelser end methan":3.18259331840221*0.0000001,
           "Andre flygtige organiske forbindelser end meth":3.18259331840221*0.0000001,
@@ -66,9 +76,13 @@ dict_air={"1,2-dichlorethan (EDC)":1.07158410599566*0.000001,
           
           "Dichlormethan (DCM)":9.90562818568672*0.0000001,
           
+          "Di-(2-ethylhexyl)phthalat (DEHP)":1.04033663993061*0.000001,
+          
           "Dieldrin":0.000469832578068859,
           
           "Endrin":0.0000495014078789241,
+          
+          "Ethylenoxid":5.42952090092797*0.0000001,
           
           "Heptachlor":7.69419438990404*0.000001, 
           
@@ -84,8 +98,38 @@ dict_air={"1,2-dichlorethan (EDC)":1.07158410599566*0.000001,
           "Kviksølv":0.401902575137441, 
           "Hg":0.401902575137441, 
           
+          "Lindan":0.0000338310574898758,
+          
+          "Mirex":0.0137796546686404,
+          
+          "Naphthalen":3.10493492042204*0.00000001,
+          
           "Nikkel og nikkelforbindelser (som Ni)":0.0043038411975314,
           "Nikkel":0.0043038411975314,
+          
+          "PCDD + PCDF (dioxiner + furaner) (som Teq)":75.0553379397237, 
+          "Dioxiner og furaner":75.0553379397237,
+          "Dioxin":75.0553379397237,
+          
+          "Pentachlorbenzen":0.000041184145170549,
+          
+          "Pentachlorphenol (PCP)":5.62121366524698*0.000001, 
+          
+          "Polychlorerede biphenyler (PCB)":0.000313265883480163,
+          
+          "Polycykliske aromatiske kulbrinter (PAH)":0.000853017256328671, 
+          
+          "Tetrachlorethylen (PER)":2.95513417841283*0.000001,
+          
+          "Tetrachlormethan (TCM)":0.0000334520732776412,
+          
+          "Toxaphen":0.00145083752359959,
+          
+          "Trichlorethylen":1.55110783379822*0.00000001,
+          
+          "Trichlormethan":2.55939714848341*0.000001,
+          
+          "Vinylchlorid":3.78973220840766*0.0000001,
           
           "Zink og zinkforbindelser (som Zn)":0.0038082097461898, 
           "Zink":0.0038082097461898,  
@@ -96,9 +140,14 @@ dict_air={"1,2-dichlorethan (EDC)":1.07158410599566*0.000001,
 
 
 
-dict_water={"1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
+dict_water={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000192105853935005,
+            "hch":0.0000192105853935005,
+    
+            "1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
             
             "Aldrin":0.0000851824336171736,
+            
+            "Anthracen":8.86806522137371*0.000001,
     
             "Arsen og arsenforbindelser (som As)":0.374925215174424, 
             "As":0.374925215174424,
@@ -130,6 +179,8 @@ dict_water={"1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
             
             "Dichlormethan (DCM)":8.72788669106573*0.0000001,
             
+            "Di-(2-ethylhexyl)phthalat (DEHP)":6.70721969814947*0.000000001, 
+            
             "Dieldrin":0.000590362020290507, 
             
             "Diuron":1.73399290088565*0.00000001, 
@@ -137,6 +188,12 @@ dict_water={"1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
             "Endosulfan":5.11027812984048*0.0000001, 
             
             "Endrin":0.0000665529831129206,
+            
+            "Ethylbenzen":3.09026883913325*0.00000001,
+            
+            "Ethylenoxid":3.89388081541384*0.0000001,
+            
+            "Fluoranthen":4.39676771665795*0.000001,
             
             "Halogenerede organiske forbindelser (som AOX)":5.5958206770491*0.0000001,
             
@@ -156,8 +213,54 @@ dict_water={"1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
             "Kviksølv":0.0149114724843161, 
             "Hg":0.0149114724843161, 
              
+            "Lindan":0.0000187350021495162,
+            
+            "Mirex":0.00813827460835499,
+            
+            "Naphthalen":1.65649576922607*0.00000001,
+            
             "Nikkel og nikkelforbindelser (som Ni)":0.00455669002477504,
             "Nikkel":0.00455669002477504,
+            
+            "PCDD + PCDF (dioxiner + furaner) (som Teq)":30.1350014076867, 
+            "Dioxiner og furaner":30.1350014076867,
+            "Dioxin":30.1350014076867,
+            
+            "Pentachlorbenzen":0.00003953078010687, 
+            
+            "Pentachlorphenol (PCP)":1.41683151524376*0.000001, 
+            
+            "Phenoler (som total C)":3.27810444781117*0.0000000001,
+            "phenol":3.27810444781117*0.0000000001,
+            "Phenol":3.27810444781117*0.0000000001,
+            "Fenol":3.27810444781117*0.0000000001,
+            
+            "Polychlorerede biphenyler (PCB)":0.00029613434521411,
+            
+            "Polycykliske aromatiske kulbrinter (PAH)":0.000204708133260099,
+            
+            "Simazin":8.57169347484953*0.00000001,
+            
+            "Tetrachlorethylen (PER)":2.69497025955807*0.000001,
+            
+            "Tetrachlormethan (TCM)":0.0000305208964727396,
+            
+            "Toluen":1.42537978105269*0.000000001,
+            "Toluol":1.42537978105269*0.000000001,
+            "Toluene":1.42537978105269*0.000000001,
+            
+            "Toxaphen":0.00117606341398786,
+            
+            "Trichlorethylen":1.39314357791123*0.00000001,
+            
+            "Trichlormethan":2.23354715780281*0.000001,
+            
+            "Trifluralin":2.90338350754896*0.0000001,
+            
+            "Vinylchlorid":3.2293907914479*0.0000001, 
+            
+            "Xylener":1.06366534836094*0.000000001,
+            "Xilen":1.06366534836094*0.000000001,
             
             "Zink og zinkforbindelser (som Zn)":0.00199172288350793, 
             "Zink":0.00199172288350793,  
@@ -166,35 +269,10 @@ dict_water={"1,2-dichlorethan (EDC)":9.51389585137521*0.0000001,
             "Tungmetaller (hovedsagelig zink)":0.00199172288350793, 
             }
 """
-dict_air={"1,1,1-trichlorethan":0.7, 
-          "1,1,2,2-tetrachlorethan":210000, 
-          "1,2,3,4,5,6-hexachlorcyclohexan(HCH)":6400000,
-          "Ammoniak (NH3)":7, 
-          "Anthracen":3.3, 
-          "Asbest":170000000, 
-          "Di-(2-ethylhexyl)phthalat (DEHP)":8600, 
-          "Ethylenoxid":11000000,
-          "Fluor og uorganiske fluorforbindelser (som HF)":17, 
-          "Hydrogencyanid (HCN)":4400, 
-          "Lindan":110000,  
-          "Naphthalen":12000, 
-          "PCDD + PCDF (dioxiner + furaner) (som Teq)":1400000000, 
-          "Pentachlorbenzen":1300, 
-          "Pentachlorphenol (PCP)":18000,  
-          "Polychlorerede biphenyler (PCB)":360000, 
-          "Polycykliske aromatiske kulbrinter (PAH)":390000,
-          "Tetrachlorethylen (PER)":930, 
-          "Tetrachlormethan (TCM)":21000, 
-          "Toxaphen":1100000, 
-          "Trichlorbenzener (TCB) (alle isomere)":18, 
-          "Trichlorethylen":15000, 
-          "Trichlormethan":82000, 
-          "Vinylchlorid":31000, 
-          "hch":6400000, 
+dict_air={
+          "Ammoniak (NH3)":7,     
           "Flour og uorganiske flourforbindelser":17,  
-          "Dioxin":1400000000, 
           "Ammoniak/ammonium":7,
-          "Dioxiner og furaner":1400000000,  
           "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":43000000, 
           "Sum (pb, cr, cu mv.)":43000000,
           "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb, V":43000000, 
@@ -227,8 +305,6 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Sum af tungmetallerne As, Co, Cr, Cu, Mn, Ni, Pb, Sb og V":43000000, 
           "Sb+As+Pb+Cr+Cu+Mn+Ni+V":43000000, 
           "Fluor og uorganiske fluorforbindelser (som HF":17, 
-          "HF":17, 
-          "hf":17, 
           "As+Co+Cr+Cu+Mn+Ni+Pb+Sb+V": 43000000, 
           "Nikkel+Arsen+Cadmium+Kviksølv+Bly+Chrom+Kobber+Mangan":43000000, 
           "Hydrogenflourid":17,
@@ -238,58 +314,21 @@ dict_air={"1,1,1-trichlorethan":0.7,
           "Pb+Cr+Cu":43000000, 
           "Cd, Ti":6400000, 
           "Sølv+Crom+Kobber":43000000, 
-          "hydrogen fluorid":17
           }
 
 
 
 #dictionary for water emission toxicity weights
-dict_water={ 
-            "1,2,3,4,5,6-hexachlorcyclohexan(HCH)":6300000,
-            "Anthracen":3.3, 
-            "Asbest":170000000,  
-            "Cyanider (som total CN)":200,  
-            "Di-(2-ethylhexyl)phthalat (DEHP)":14000, 
-            "Ethylbenzen":1100, 
-            "Ethylenoxid":220000,  
-            "Lindan":110000, 
-            "Naphthalen":50, 
-            "Nikkel og nikkelforbindelser (som Ni)":91, 
-            "PCDD + PCDF (dioxiner + furaner) (som Teq)":1400000000, 
-            "Pentachlorbenzen":1300, 
-            "Pentachlorphenol (PCP)":400000, 
-            "Phenoler (som total C)":3.3, 
-            "Polychlorerede biphenyler (PCB)":2000000, 
-            "Polycykliske aromatiske kulbrinter (PAH)":180000,
-            "Simazin":12000, 
-            "Tetrachlorethylen (PER)":2100,
-            "Tetrachlormethan (TCM)":70000, 
-            "Toluen":13, 
-            "Total fosfor":50000,  
-            "Toxaphen":1100000, 
-            "Trichlorbenzener (TCB) (alle isomere)":100,
-            "Trichlorethylen":4600, 
-            "Trichlormethan":6100, 
-            "Trifluralin":770, 
-            "Triphenyltin og triphenyltinforbindelser":18000000, 
-            "Vinylchlorid":1500000, 
-            "Xylener":5,  
-            "hch":6300000, 
+dict_water=  
+            "Total fosfor":50000,    
             "Total fosfor  (tot-P)":50000, 
-            "Toluol":13, 
-            "Dioxin":1400000000, 
-            "Total fosfor":50000, 
-            "Dioxiner og furaner":1400000000, 
+            "Total fosfor":50000,  
             "Total fosfor (tot-P)":50000, 
-            "phenol":3.3, 
 
-            "Xilen":5,
-            "Toluene":13,
-            "Phenol":3.3, 
+
             "Total P":50000,
             "Antimon+arsen+bly+krom+koblot+kobber+mangan+nikkel+vanadium":1500000, 
             "Sum (pb, cr, cu mv.)": 500000,
-            "Cyan":200, 
             "Pb+Cr+Cu+Mn":500000, 
             "Sb,As,Pb,Cr,Co,Cu,Mn,Ni,V,Hg": 1500000, 
             "Sb+As+Pb+Cr+Co+Cu+Mn+Ni+V":1500000, 
@@ -323,7 +362,6 @@ dict_water={
             "Pb+Cr+Cu":500000, 
             "Cd, Ti":2000, 
             "Sølv+Crom+Kobber":500000, 
-            "Fenol":3.3
             }
 
 """
