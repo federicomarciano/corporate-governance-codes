@@ -46,7 +46,7 @@ dict_air={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000366095266066354,
           
           "Anthracen":4.96240490662358*0.000001,
     
-          "Andre flygtige organiske forbindelser end methan":3.18259331840221*0.0000001,
+          "Andre flygtige organiske forbindelser end methan (NMVOC)":3.18259331840221*0.0000001,
           "Andre flygtige organiske forbindelser end meth":3.18259331840221*0.0000001,
           
           "Arsen og arsenforbindelser (som As)":0.422796038951198, 
@@ -132,6 +132,7 @@ dict_air={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000366095266066354,
           "Vinylchlorid":3.78973220840766*0.0000001,
           
           "Zink og zinkforbindelser (som Zn)":0.0038082097461898, 
+          "Zink og zinkforbindelser (som ZN)":0.0038082097461898, 
           "Zink":0.0038082097461898,  
           "Zinkstøv":0.0038082097461898,  
           "Støv fra zinkgryde":0.0038082097461898,
@@ -263,6 +264,7 @@ dict_water={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000192105853935005,
             "Xilen":1.06366534836094*0.000000001,
             
             "Zink og zinkforbindelser (som Zn)":0.00199172288350793, 
+            "Zink og zinkforbindelser (som ZN)":0.00199172288350793, 
             "Zink":0.00199172288350793,  
             "Zinkstøv":0.00199172288350793, 
             "Støv fra zinkgryde":0.00199172288350793,  
@@ -407,61 +409,54 @@ dict_l={"Kobber og kobberforbindelser":8940}
 
 
 
+#initialiaze
+base="https://dma.mst.dk/prtr/offentlig/produktionsenhed"
+count=0
 
-#initialize  
-base="https://miljoeoplysninger.mst.dk/PrtrPublicering"
-url=base+"/Search?ignoreResultSizeLimit=&Virksomhedsnavn=&Aar=Alle&Vejnavn=&By=&Postnr=&Kommune=&CvrNr=&PNr=&MedtagListepunktISoegning=false&ListepunktKategori=&MedtagStofISoegning=false&Stof=&UdledningTilLuft=true&UdledningTilLuft=false&UdledningTilRecipient=true&UdledningTilRecipient=false&UdledningTilVandViaKloak=true&UdledningTilVandViaKloak=false&MedtagAffaldISoegning=false&IkkeFarligtAffald=true&IkkeFarligtAffald=false&BortskafftetIkkefarligt=true&BortskafftetIkkefarligt=false&NyttegoerelseIkkefarligt=true&NyttegoerelseIkkefarligt=false&FarligtAffald=true&FarligtAffald=false&BortskafftetFarligt=true&BortskafftetFarligt=false&NyttegoerelseFarligt=true&NyttegoerelseFarligt=false&FarligtAffaldEksporteret=true&FarligtAffaldEksporteret=false&BortskafftetEskporteret=true&BortskafftetEskporteret=false&NyttegoerelseEskporteret=true&NyttegoerelseEskporteret=false"
-html=requests.get(url).text 
-soup=bs(html,features='html.parser')
-rows=soup.find("tbody").findAll("tr")
+#loop 600
+for i in range(23,660):
+ print("page" + str(i))
+ url=base+"?searchProductionUnitName=&searchAdressLine=&searchPostalDistrict=&authorityCode=&searchCHR=&action=search&searchCVR=&page="+str(i)+"&searchYear=&searchPNumber="
+ html=requests.get(url).text 
+ soup=bs(html,features='html.parser')
+ rows=soup.find("tbody").findAll("tr")
 
-
-
-
-#4555
-#loop
-for row in rows: 
-
-#initial page 
- num=row.find("td").text
- company_name= row.find("td").findNext("td").find("a").text
- year=row.find("td").findNext("td").findNext("td").text
- identifier = row.find("td").findNext("td").find("a")["href"]
- identifier = identifier.replace("PrtrPublicering/Virksomhed/Detaljer/","")
- url1=base+"/Virksomhed/Detaljer/"+identifier 
- url2=base+"/Virksomhed/UdledningOgAffald/"+identifier 
- url3=base+"/Virksomhed/UdledningOgAffald/"+identifier 
-
-#company details 
- html=requests.get(url1).text
- soup=bs(html,features='html.parser') 
- div=soup.find("div", {"class":"VirksomhedsDetaljerStamdata"}) 
- cvr_firm=div.find("label").findNext("label").next_sibling 
- p_number=div.find("label").findNext("label").findNext("label").next_sibling 
+ for row in rows: 
+   count=count+1 
+   print(str(count))
+   company_name= row.find("td").find("a").text.strip()
+   year=row.find("td").findNext("td").text.strip()
+   cvr_firm=row.find("td").findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").text.strip()
+   p_number=row.find("td").findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").text.strip()
+   identifier = row.find("td").find("a")["href"]
+   identifier = identifier.replace("/prtr/offentlig/produktionsenhed","")
+   url1=base+identifier
+   html=requests.get(url1).text 
+   soup=bs(html,features='html.parser')
 
 #emissions
- html=requests.get(url2).text
- soup=bs(html,features='html.parser')
- measure_list="" 
- strange_list=""
- problems=0
+
+   measure_list="" 
+   strange_list=""
+   problems=0
  
 #air 
- if "Virksomheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår." in html: 
+   if "Produktionsenheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår" in html: 
      air=0
      strange_air=0
      GHGs=0
- else:    
+   else:    
      air=0
      strange_air=0
      GHGs=0
-     body=soup.find("table", {"id":"UdledningTilLuftTabel"}).find("tbody")
-     substances=body.findAll("tr")
+     substances=soup.find("div", {"id":"pollutantAir"}).findNext("tbody").findAll("tr")
      
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
-         value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text.strip().lower()
+         value=substance.findNext("td").findNext("td").findNext("td").text.strip()
+         value=value.replace(".","")
+         value=value.replace(",",".")
+         measure=substance.findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").text.strip().lower()
          
          
          
@@ -480,7 +475,7 @@ for row in rows:
              #see if the measure is kilograms 
              if measure.startswith("t"): 
                  value = value*1000             
-             elif measure.startswith("kg"): 
+             elif measure.startswith("k"): 
                  value = value            
              elif measure.startswith("m"): 
                  if name in list(dict_m3.keys()): 
@@ -520,7 +515,7 @@ for row in rows:
             #see if the measure is kilogram
              if measure.startswith("t"): 
                  value = value*1000             
-             elif measure.startswith("kg"): 
+             elif measure.startswith("k"): 
                  value = value            
              elif measure.startswith("m"): 
                  if name in list(dict_m3.keys()): 
@@ -554,20 +549,21 @@ for row in rows:
 
 
 #water recipient 
- if "Virksomheden har ikke oplyst, at den har udledninger til vand (til recipient) for det pågældende regnskabsår." in html: 
+   if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - recipient for det pågældende regnskabsår" in html: 
      water_rec=0
      strange_water_rec=0
- else: 
+   else: 
      water_rec=0 
      strange_water_rec=0 
-     body=soup.find("table", {"id":"UdledningTilVandRecipientTabel"}).find("tbody")
-     substances=body.findAll("tr")
-     
+     substances=soup.find("div", {"id":"pollutantWaterRecipient"}).findNext("tbody").findAll("tr")
      
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
-         value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text.strip().lower()
+         value=substance.findNext("td").findNext("td").findNext("td").text.strip()
+         value=value.replace(".","")
+         value=value.replace(",",".")
+         measure=substance.findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").text.strip().lower()
+         
          
          if name in list(dict_water.keys()): 
              
@@ -582,7 +578,7 @@ for row in rows:
              #see if the measure is kilogram
              if measure.startswith("t"): 
                  value = value*1000             
-             elif measure.startswith("kg"): 
+             elif measure.startswith("k"): 
                  value = value            
              elif measure.startswith("m"): 
                  if name in list(dict_m3.keys()): 
@@ -616,19 +612,21 @@ for row in rows:
 
 
 #water sewer 
- if "Virksomheden har ikke oplyst, at den har udledninger til vand (via kloak) for det pågældende regnskabsår." in html: 
+   if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - kloak for det pågældende regnskabsår" in html: 
      water_sew=0
      strange_water_sew=0
- else: 
+   else: 
      water_sew=0 
      strange_water_sew=0 
-     body=soup.find("table", {"id":"UdledningTilVandKloakTabel"}).find("tbody")
-     substances=body.findAll("tr")
+     substances=soup.find("div", {"id":"pollutantWaterSewer"}).findNext("tbody").findAll("tr")
      
      for substance in substances: 
          name=substance.findNext("td").text.strip() 
-         value=substance.findAll("td")[2].text.replace(",",".")
-         measure=substance.findAll("td")[3].text.strip().lower()
+         value=substance.findNext("td").findNext("td").findNext("td").text.strip()
+         value=value.replace(".","")
+         value=value.replace(",",".")
+         measure=substance.findNext("td").findNext("td").findNext("td").findNext("td").findNext("td").text.strip().lower()
+         
          
          #see if the value is missing 
          if name in list(dict_water.keys()): 
@@ -641,7 +639,7 @@ for row in rows:
             #see if the measure is kilogram
              if measure.startswith("t"): 
                  value = value*1000             
-             elif measure.startswith("kg"): 
+             elif measure.startswith("k"): 
                  value = value            
              elif measure.startswith("m"): 
                  if name in list(dict_m3.keys()): 
@@ -672,17 +670,17 @@ for row in rows:
 
 
 #add a row 
- values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
+   values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
                 'year':year, 'air':air, 'GHGs':GHGs, 'strange_air':strange_air,
                 'water_rec':water_rec, 'strange_water_rec':strange_water_rec, 
                 'water_sew':water_sew, 'strange_water_sew':strange_water_sew, 
                 'strange_list':strange_list, 'measure_list':measure_list, 'problems':problems}
- row_to_add=pd.Series(values_to_add)
- df=df.append(row_to_add, ignore_index=True)
- print(num)
+   row_to_add=pd.Series(values_to_add)
+   df=df.append(row_to_add, ignore_index=True)
+ 
  
 
 #save
-writer=pd.ExcelWriter('GreenAccounts2010.xlsx')
+writer=pd.ExcelWriter('GreenAccounts2010_NewFormat.xlsx')
 df.to_excel(writer, index=False)
 writer.save()
