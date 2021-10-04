@@ -3,23 +3,19 @@ from googletrans import Translator
 import os 
 os.chdir(r"C:\Users\Dell\Dropbox\Il mio PC (DESKTOP-6UGDNEK)\Desktop\research_professional\corporate-governance-codes\PythonFiles")
 translator = Translator()
-df=pd.read_excel("GreenAccounts2010.xlsx")
+df=pd.read_excel("GreenAccounts2010_NewFormat.xlsx")
 df = df.fillna('')
 def comma(word):
     if word=="nan": 
         word = ""
     output=str(word)
-    output=output.lower()
+
     return output 
 
 df['strange_list']=df['strange_list'].apply(comma)
 string=''.join(df.strange_list)
 li=string.split(" !!! ")
-lis=[]
-for word in li: 
-        if "vand" in word: 
-            lis.append(word)
-se=set(lis)
+se=set(li)
 n=0
 for i in se: 
        n=n+1

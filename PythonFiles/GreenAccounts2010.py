@@ -133,6 +133,7 @@ dict_air={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000366095266066354,
           
           "Zink og zinkforbindelser (som Zn)":0.0038082097461898, 
           "Zink og zinkforbindelser (som ZN)":0.0038082097461898, 
+          "Zink og zonkforbindelser (som ZN)":0.0038082097461898,
           "Zink":0.0038082097461898,  
           "Zinkstøv":0.0038082097461898,  
           "Støv fra zinkgryde":0.0038082097461898,
@@ -265,6 +266,7 @@ dict_water={"1,2,3,4,5,6-hexachlorcyclohexan(HCH)":0.0000192105853935005,
             
             "Zink og zinkforbindelser (som Zn)":0.00199172288350793, 
             "Zink og zinkforbindelser (som ZN)":0.00199172288350793, 
+            "Zink og zonkforbindelser (som ZN)":0.00199172288350793,
             "Zink":0.00199172288350793,  
             "Zinkstøv":0.00199172288350793, 
             "Støv fra zinkgryde":0.00199172288350793,  
@@ -413,7 +415,7 @@ dict_l={"Kobber og kobberforbindelser":8940}
 base="https://dma.mst.dk/prtr/offentlig/produktionsenhed"
 count=0
 
-#loop 600
+#loop 23
 for i in range(23,660):
  print("page" + str(i))
  url=base+"?searchProductionUnitName=&searchAdressLine=&searchPostalDistrict=&authorityCode=&searchCHR=&action=search&searchCVR=&page="+str(i)+"&searchYear=&searchPNumber="
@@ -433,19 +435,19 @@ for i in range(23,660):
    url1=base+identifier
    html=requests.get(url1).text 
    soup=bs(html,features='html.parser')
-
+   try:
 #emissions
-
-   measure_list="" 
-   strange_list=""
-   problems=0
+   
+    measure_list="" 
+    strange_list=""
+    problems=0
  
 #air 
-   if "Produktionsenheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår" in html: 
+    if "Produktionsenheden har ikke oplyst, at den har udledninger til luft for det pågældende regnskabsår" in html: 
      air=0
      strange_air=0
      GHGs=0
-   else:    
+    else:    
      air=0
      strange_air=0
      GHGs=0
@@ -549,10 +551,10 @@ for i in range(23,660):
 
 
 #water recipient 
-   if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - recipient for det pågældende regnskabsår" in html: 
+    if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - recipient for det pågældende regnskabsår" in html: 
      water_rec=0
      strange_water_rec=0
-   else: 
+    else: 
      water_rec=0 
      strange_water_rec=0 
      substances=soup.find("div", {"id":"pollutantWaterRecipient"}).findNext("tbody").findAll("tr")
@@ -612,10 +614,10 @@ for i in range(23,660):
 
 
 #water sewer 
-   if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - kloak for det pågældende regnskabsår" in html: 
+    if "Produktionsenheden har ikke oplyst, at den har udledninger til vand - kloak for det pågældende regnskabsår" in html: 
      water_sew=0
      strange_water_sew=0
-   else: 
+    else: 
      water_sew=0 
      strange_water_sew=0 
      substances=soup.find("div", {"id":"pollutantWaterSewer"}).findNext("tbody").findAll("tr")
@@ -670,13 +672,15 @@ for i in range(23,660):
 
 
 #add a row 
-   values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
+    values_to_add={'company_name':company_name, 'cvr_firm':cvr_firm, 'p_number':p_number, 
                 'year':year, 'air':air, 'GHGs':GHGs, 'strange_air':strange_air,
                 'water_rec':water_rec, 'strange_water_rec':strange_water_rec, 
                 'water_sew':water_sew, 'strange_water_sew':strange_water_sew, 
                 'strange_list':strange_list, 'measure_list':measure_list, 'problems':problems}
-   row_to_add=pd.Series(values_to_add)
-   df=df.append(row_to_add, ignore_index=True)
+    row_to_add=pd.Series(values_to_add)
+    df=df.append(row_to_add, ignore_index=True)
+   except:
+       print("page"+str(i)+" "+str(count)+" "+"check")
  
  
 
