@@ -1486,7 +1486,18 @@ sort dif_t
 restore 
 
 
-
+*New Format
+preserve 
+keep if toxicity_nf !=. 
+label variable toxicity_nf "Toxicity"
+estpost tabstat toxicity_nf, statistics(mean sd min max) columns(statistics)
+collapse (mean) toxicity_nf, by(year) 
+drop if year<2007
+line toxicity_nf year, xtitle("Year") ytitle("Toxicity") xsc(r(2007 2019)) xlabel(2007(1)2019, angle(90)) ylabel(,angle(0))  graphregion(color(white)) bgcolor(white)
+graph export "TablesAndGraphs\toxicity.png", as(png) name("Graph") replace
+line GHGs year, xtitle("Year") ytitle("GHGs") xsc(r(2010 2019)) xlabel(2007(1)2019, angle(90)) ylabel(0(20)120, angle(0))  graphregion(color(white)) bgcolor(white)
+graph export "TablesAndGraphs\GHGs.png", as(png) name("Graph") replace
+restore
 
 *CORRELATIONS*******************************************************************
 local dir `c(pwd)'

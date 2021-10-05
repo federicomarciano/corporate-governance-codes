@@ -628,9 +628,55 @@ merge 1:1 cvr_firm year using  CorporateGovernance_HeavyData\TempData\Temp_Green
 gen toxicity_water=toxicity + water 
 save CorporateGovernance_HeavyData\TempData\Temp_GreenAccounts.dta, replace 
 
+*new format 
+clear 
+import excel CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, firstrow 
+save CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, replace
 
-
-
+use CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, clear 
+destring year, replace 
+gen num=_n
+replace cvr_firm="28025319" if company_name=="Kim Puge Kjær Knudsen" 
+replace cvr_firm="12505078" if company_name=="Altuglas International Denmark A/S (Repsol)" & year==2007 
+replace cvr_firm="12505078" if company_name=="Altuglas International Denmark A/S (Repsol)" & year==2008 
+replace cvr_firm="74249515" if company_name=="Asger Pedersen" & year==2007 
+replace cvr_firm="12298641" if company_name=="Bent Jensen" & year==2012 
+replace cvr_firm="12298641" if company_name=="Bent Jensen" & year==2007 
+replace cvr_firm="71271919" if company_name=="Dallerupgård A/S" & year==2007
+replace cvr_firm="53686214" if company_name=="FF SKAGEN A/S" & year==2016 
+replace cvr_firm="53686214" if company_name=="FF SKAGEN A/S" & year==2015 
+replace cvr_firm="20445084" if company_name=="Fredsholm Multisite K/S" & year==2007 
+replace cvr_firm="26993326" if company_name=="HRP KYLLINGEFARME A/S Holmegården" & year==2007 
+replace cvr_firm="26993326" if company_name=="HRP KYLLINGEFARME A/S Holmegården" & year==2008 
+replace cvr_firm="26993326" if company_name=="HRP KYLLINGEFARME A/S Holmegården" & year==2009 
+replace cvr_firm="59321110" if company_name=="Henrik J Enderlein" & year==2007 
+replace cvr_firm="14768343" if company_name=="I/S Revas" & year==2007 
+replace cvr_firm="29734097" if company_name=="Karsten Thier Larsen" & year==2007 
+replace cvr_firm="79456314" if company_name=="Lars Bojsen" & year==2007 
+replace cvr_firm="16840378" if company_name=="Mogens Sørensen" & year==2007 
+replace cvr_firm="28434456" if company_name=="Morten Kuhr" & year==2007 
+replace cvr_firm="12881983" if company_name=="Poul Sloth" & year==2007 
+replace cvr_firm="25935977" if company_name=="Ravnholt v/Anders Heckmann Høy" & year==2007 
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2010 
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2012
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2007
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2009
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2008
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2014
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2011
+replace cvr_firm="11933238" if company_name=="SAINT-GOBAIN ISOVER A/S" & year==2015
+replace cvr_firm="28036493" if company_name=="Simon Salling Syrik" & year==2008
+replace cvr_firm="28036493" if company_name=="Simon Salling Syrik" & year==2007
+replace cvr_firm="28036493" if company_name=="Simon Salling Syrik" & year==2009 
+replace cvr_firm="25262689" if company_name=="Skanska Asfalt I/S" & year==2007 
+replace cvr_firm="26390370" if company_name=="Stenager mark  I/S" & year==2007 
+replace cvr_firm="30174968" if company_name=="Varmecentral, Bellinge" & year==2007
+bysort cvr_firm year (p_number): gen n_plants_nf=_N 
+drop p_number 
+gen toxicity_nf = air + water_rec + water_sew 
+rename GHGs GHGs_nf
+collapse (sum) toxicity_nf GHGs_nf, by(cvr_firm year n_plants_nf)
+save CorporateGovernance_HeavyData\TempData\Temp_GreenAccounts_NewFormat.dta, replace 
 
 *MERGE**************************************************************************
 use CorporateGovernance_HeavyData\TempData\Temp_Ownership_1, clear 
@@ -1152,6 +1198,8 @@ order nat_ultimate_owned gov_ultimate_owned priv_ultimate_owned listed_ultimate_
 */ toxicity GHGs, last 
 
 
+*merging with the new format of green accounts
+merge 1:1 cvr_firm year using  CorporateGovernance_HeavyData\TempData\Temp_GreenAccounts_NewFormat.dta, keep(match master) nogenerate
 
 
 *SAVE***************************************************************************
