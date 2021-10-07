@@ -1,5 +1,5 @@
 ********************************************************************************
-* create.do   09\28\2021 *******************************************************
+* create.do   10\06\2021 *******************************************************
 ********************************************************************************
 /*
 
@@ -504,6 +504,8 @@ clear
 import excel CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010, firstrow 
 save CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010, replace
 
+
+*OLD FORMAT
 use CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010, clear 
 destring year, replace 
 gen num=_n
@@ -628,11 +630,329 @@ merge 1:1 cvr_firm year using  CorporateGovernance_HeavyData\TempData\Temp_Green
 gen toxicity_water=toxicity + water 
 save CorporateGovernance_HeavyData\TempData\Temp_GreenAccounts.dta, replace 
 
-*new format 
+
+
+*NEW FORMAT  (with raw data on emissions)
 clear 
+
+*import raw data on emissions
+import excel CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_RawFormat, firstrow 
+
+*replace according to the USEtox weights
+*air
+replace hexachlorcyclohexan_air=hexachlorcyclohexan_air*3.66095266066354e-05
+replace tetrachlorethan_air=tetrachlorethan_air*2.2477960370426403e-06
+replace trichlorethan_air=trichlorethan_air*3.61446311352547e-08
+replace dichlorethan_air=dichlorethan_air*1.0715841059956598e-06
+replace aladrin_air=aladrin_air*2.06732426546541e-05
+replace anthracen_air=anthracen_air*4.96240490662358e-06
+replace nmovoc_air=nmovoc_air*3.18259331840221e-07
+replace arsenic_air=arsenic_air*0.422796038951198
+replace benzen_air=benzen_air*3.18259331840221e-07
+replace benzo_air=benzo_air*6.17414072683301e-06
+replace bly_air=bly_air*0.0040824456327159
+replace cadmium_air=cadmium_air*0.0678636211928546
+replace chlordan_air=chlordan_air*0.000736958948216843
+replace chrom_air=chrom_air*1.11467615385284
+replace ddt_air=ddt_air*7.55472734313923e-05
+replace dichlormethan_air=dichlormethan_air*9.90562818568672e-07
+replace diphthalat_air=diphthalat_air*1.04033663993061e-06
+replace dieldrin_air=dieldrin_air*0.000469832578068859
+replace endrin_air=endrin_air*4.95014078789241e-05
+replace ethylenoxid_air=ethylenoxid_air*5.429520900927969e-07
+replace heptachlor_air=heptachlor_air*7.69419438990404e-06
+replace hexachlorbenzen_air=hexachlorbenzen_air*0.000540638436420577
+replace kobber_air=kobber_air*8.40947585956069e-06
+replace mercury_air=mercury_air*0.401902575137441
+replace lindan_air=lindan_air*3.38310574898758e-05
+replace mirex_air=mirex_air*0.0137796546686404
+replace naphthalen_air=naphthalen_air*3.10493492042204e-08
+replace nikkel_air=nikkel_air*0.0043038411975314
+replace dioxin_air=dioxin_air*75.0553379397237
+replace pentachlorbenzen_air=pentachlorbenzen_air*4.1184145170549e-05
+replace pentachlorphenol_air=pentachlorphenol_air*5.62121366524698e-06
+replace polychlorerede_air=polychlorerede_air*0.000313265883480163
+replace polycykliske_air=polycykliske_air*0.000853017256328671
+replace tetrachlorethylen_air=tetrachlorethylen_air*2.95513417841283e-06
+replace tetrachlormethan_air=tetrachlormethan_air*3.34520732776412e-05
+replace toxaphen_air=toxaphen_air*0.00145083752359959
+replace trichlorethylen_air=trichlorethylen_air*1.55110783379822e-08
+replace trichlormethan_air=trichlormethan_air*2.55939714848341e-06
+replace vinylchlorid_air=vinylchlorid_air*3.7897322084076595e-07
+replace zink_air=zink_air*0.0038082097461898
+
+*water receiver 
+replace hexachlorcyclohexan_water_receiver=hexachlorcyclohexan_water_receiver*1.92105853935005e-05
+replace dichlorethan_water_receiver=dichlorethan_water_receiver*9.51389585137521e-07
+replace aldrin_water_receiver=aldrin_water_receiver*8.51824336171736e-05
+replace anthracen_water_receiver=anthracen_water_receiver*8.868065221373709e-06
+replace arsen_water_receiver=arsen_water_receiver*0.374925215174424
+replace atrazin_water_receiver=atrazin_water_receiver*6.5362190864358e-08
+replace benzen_water_receiver=benzen_water_receiver*2.8313980372697196e-07
+replace benzo_water_receiver=benzo_water_receiver*7.71268648726522e-06
+replace bly_water_receiver=bly_water_receiver*4.480513838478289e-06
+replace cadmium_water_receiver=cadmium_water_receiver*0.0490069084422254
+replace chlordan_water_receiver=chlordan_water_receiver*0.000789887390778273
+replace chrom_water_receiver=chrom_water_receiver*1.11612168360908
+replace chlorpyrifos_water_receiver=chlorpyrifos_water_receiver*2.55848553766639e-06
+replace ddt_water_receiver=ddt_water_receiver*4.03810974358998e-05
+replace dichlormethan_water_receiver=dichlormethan_water_receiver*8.727886691065731e-07
+replace diphthalat_water_receiver=diphthalat_water_receiver*6.70721969814947e-09
+replace dieldrin_water_receiver=dieldrin_water_receiver*0.000590362020290507
+replace diuron_water_receiver=diuron_water_receiver*1.73399290088565e-08
+replace endosulfan_water_receiver=endosulfan_water_receiver*5.11027812984048e-07
+replace endrin_water_receiver=endrin_water_receiver*6.65529831129206e-05
+replace ethylbenzen_water_receiver=ethylbenzen_water_receiver*3.09026883913325e-08
+replace ethylenoxid_water_receiver=ethylenoxid_water_receiver*3.8938808154138396e-07
+replace fluoranthen_water_receiver=fluoranthen_water_receiver*4.39676771665795e-06
+replace halogenerede_water_receiver=halogenerede_water_receiver*5.5958206770491e-07
+replace heptachlor_water_receiver=heptachlor_water_receiver*3.40223240056288e-05
+replace hexachlorbenzen_water_receiver=hexachlorbenzen_water_receiver*0.000522210508198463
+replace hexachlorbutadien_water_receiver=hexachlorbutadien_water_receiver*1.75245595280676e-05
+replace kobber_water_receiver=kobber_water_receiver*1.39349770499053e-08
+replace mercury_water_receiver=mercury_water_receiver*0.0149114724843161
+replace lindan_water_receiver=lindan_water_receiver*1.87350021495162e-05
+replace mirex_water_receiver=mirex_water_receiver*0.00813827460835499
+replace naphthalen_water_receiver=naphthalen_water_receiver*1.65649576922607e-08
+replace nikkel_water_receiver=nikkel_water_receiver*0.00455669002477504
+replace dioxin_water_receiver=dioxin_water_receiver*30.1350014076867
+replace pentachlorbenzen_water_receiver=pentachlorbenzen_water_receiver*3.953078010687e-05
+replace pentachlorphenol_water_receiver=pentachlorphenol_water_receiver*1.41683151524376e-06
+replace phenoler_water_receiver=phenoler_water_receiver*3.27810444781117e-10
+replace polychlorerede_water_receiver=polychlorerede_water_receiver*0.00029613434521411
+replace polycykliske_water_receiver=polycykliske_water_receiver*0.000204708133260099
+replace simazin_water_receiver=simazin_water_receiver*8.57169347484953e-08
+replace tetrachlorethylen_water_receiver=tetrachlorethylen_water_receiver*2.6949702595580696e-06
+replace tetrachlormethan_water_receiver=tetrachlormethan_water_receiver*3.05208964727396e-05
+replace toluen_water_receiver=toluen_water_receiver*1.42537978105269e-09
+replace toxaphen_water_receiver=toxaphen_water_receiver*0.00117606341398786
+replace trichlorethylen_water_receiver=trichlorethylen_water_receiver*1.39314357791123e-08
+replace trichlormethan_water_receiver=trichlormethan_water_receiver*2.23354715780281e-06
+replace trifluralin_water_receiver=trifluralin_water_receiver*2.90338350754896e-07
+replace vinylchlorid_water_receiver=vinylchlorid_water_receiver*3.2293907914479e-07
+replace xylener_water_receiver=xylener_water_receiver*1.06366534836094e-09
+replace zynk_water_receiver=zynk_water_receiver*0.00199172288350793
+
+*water sewer
+replace hexachlorcyclohexan_water_sewer=hexachlorcyclohexan_water_sewer*1.92105853935005e-05
+replace dichlorethan_water_sewer=dichlorethan_water_sewer*9.51389585137521e-07
+replace aldrin_water_sewer=aldrin_water_sewer*8.51824336171736e-05
+replace anthracen_water_sewer=anthracen_water_sewer*8.868065221373709e-06
+replace arsen_water_sewer=arsen_water_sewer*0.374925215174424
+replace atrazin_water_sewer=atrazin_water_sewer*6.5362190864358e-08
+replace benzen_water_sewer=benzen_water_sewer*2.8313980372697196e-07
+replace benzo_water_sewer=benzo_water_sewer*7.71268648726522e-06
+replace bly_water_sewer=bly_water_sewer*4.480513838478289e-06
+replace cadmium_water_sewer=cadmium_water_sewer*0.0490069084422254
+replace chlordan_water_sewer=chlordan_water_sewer*0.000789887390778273
+replace chrom_water_sewer=chrom_water_sewer*1.11612168360908
+replace chlorpyrifos_water_sewer=chlorpyrifos_water_sewer*2.55848553766639e-06
+replace ddt_water_sewer=ddt_water_sewer*4.03810974358998e-05
+replace dichlormethan_water_sewer=dichlormethan_water_sewer*8.727886691065731e-07
+replace diphthalat_water_sewer=diphthalat_water_sewer*6.70721969814947e-09
+replace dieldrin_water_sewer=dieldrin_water_sewer*0.000590362020290507
+replace diuron_water_sewer=diuron_water_sewer*1.73399290088565e-08
+replace endosulfan_water_sewer=endosulfan_water_sewer*5.11027812984048e-07
+replace endrin_water_sewer=endrin_water_sewer*6.65529831129206e-05
+replace ethylbenzen_water_sewer=ethylbenzen_water_sewer*3.09026883913325e-08
+replace ethylenoxid_water_sewer=ethylenoxid_water_sewer*3.8938808154138396e-07
+replace fluoranthen_water_sewer=fluoranthen_water_sewer*4.39676771665795e-06
+replace halogenerede_water_sewer=halogenerede_water_sewer*5.5958206770491e-07
+replace heptachlor_water_sewer=heptachlor_water_sewer*3.40223240056288e-05
+replace hexachlorbenzen_water_sewer=hexachlorbenzen_water_sewer*0.000522210508198463
+replace hexachlorbutadien_water_sewer=hexachlorbutadien_water_sewer*1.75245595280676e-05
+replace kobber_water_sewer=kobber_water_sewer*1.39349770499053e-08
+replace mercury_water_sewer=mercury_water_sewer*0.0149114724843161
+replace lindan_water_sewer=lindan_water_sewer*1.87350021495162e-05
+replace mirex_water_sewer=mirex_water_sewer*0.00813827460835499
+replace naphthalen_water_sewer=naphthalen_water_sewer*1.65649576922607e-08
+replace nikkel_water_sewer=nikkel_water_sewer*0.00455669002477504
+replace dioxin_water_sewer=dioxin_water_sewer*30.1350014076867
+replace pentachlorbenzen_water_sewer=pentachlorbenzen_water_sewer*3.953078010687e-05
+replace pentachlorphenol_water_sewer=pentachlorphenol_water_sewer*1.41683151524376e-06
+replace phenoler_water_sewer=phenoler_water_sewer*3.27810444781117e-10
+replace polychlorerede_water_sewer=polychlorerede_water_sewer*0.00029613434521411
+replace polycykliske_water_sewer=polycykliske_water_sewer*0.000204708133260099
+replace simazin_water_sewer=simazin_water_sewer*8.57169347484953e-08
+replace tetrachlorethylen_water_sewer=tetrachlorethylen_water_sewer*2.6949702595580696e-06
+replace tetrachlormethan_water_sewer=tetrachlormethan_water_sewer*3.05208964727396e-05
+replace toluen_water_sewer=toluen_water_sewer*1.42537978105269e-09
+replace toxaphen_water_sewer=toxaphen_water_sewer*0.00117606341398786
+replace trichlorethylen_water_sewer=trichlorethylen_water_sewer*1.39314357791123e-08
+replace trichlormethan_water_sewer=trichlormethan_water_sewer*2.23354715780281e-06
+replace trifluralin_water_sewer=trifluralin_water_sewer*2.90338350754896e-07
+replace vinylchlorid_water_sewer=vinylchlorid_water_sewer*3.2293907914479e-07
+replace xylener_water_sewer=xylener_water_sewer*1.06366534836094e-09
+replace zynk_water_sewer=zynk_water_sewer*0.00199172288350793
+
+*ghg
+replace carbon_ghg=carbon_ghg*1
+replace chlorfluorcarboner_ghg=chlorfluorcarboner_ghg*4750
+replace dinitrogenoxid_ghg=dinitrogenoxid_ghg*298
+replace hydrochlorfluorcarboner_ghg=hydrochlorfluorcarboner_ghg*1810
+replace hydrofluorcarboner_ghg=hydrofluorcarboner_ghg*1430
+replace metan_ghg=metan_ghg*25
+replace perfluorcarboner_ghg=perfluorcarboner_ghg*7390
+replace svovlhexafluorid_ghg=svovlhexafluorid_ghg*22800
+
+*generate air
+gen toxicity_nf = hexachlorcyclohexan_air + /*
+*/ tetrachlorethan_air + /*
+*/ trichlorethan_air + /*
+*/ dichlorethan_air + /*
+*/ aladrin_air + /*
+*/ anthracen_air + /*
+*/ nmovoc_air + /*
+*/ arsenic_air + /*
+*/ benzen_air + /*
+*/ benzo_air + /*
+*/ bly_air + /*
+*/ cadmium_air + /*
+*/ chlordan_air + /*
+*/ chrom_air + /*
+*/ ddt_air + /*
+*/ dichlormethan_air + /*
+*/ diphthalat_air + /*
+*/ dieldrin_air + /*
+*/ endrin_air + /*
+*/ ethylenoxid_air + /*
+*/ heptachlor_air + /*
+*/ hexachlorbenzen_air + /*
+*/ kobber_air + /*
+*/ mercury_air + /*
+*/ lindan_air + /*
+*/ mirex_air + /*
+*/ naphthalen_air + /*
+*/ nikkel_air + /*
+*/ dioxin_air + /*
+*/ pentachlorbenzen_air + /*
+*/ pentachlorphenol_air + /*
+*/ polychlorerede_air + /*
+*/ polycykliske_air + /*
+*/ tetrachlorethylen_air + /*
+*/ tetrachlormethan_air + /*
+*/ toxaphen_air + /*
+*/ trichlorethylen_air + /*
+*/ trichlormethan_air + /*
+*/ vinylchlorid_air + /*
+*/ zink_air 
+
+gen water_rec= hexachlorcyclohexan_water_receiver + /*
+*/ dichlorethan_water_receiver + /*
+*/ aldrin_water_receiver + /*
+*/ anthracen_water_receiver + /*
+*/ arsen_water_receiver + /*
+*/ atrazin_water_receiver + /*
+*/ benzen_water_receiver + /*
+*/ benzo_water_receiver + /*
+*/ bly_water_receiver + /*
+*/ cadmium_water_receiver + /*
+*/ chlordan_water_receiver + /*
+*/ chrom_water_receiver + /*
+*/ chlorpyrifos_water_receiver + /*
+*/ ddt_water_receiver + /*
+*/ dichlormethan_water_receiver + /*
+*/ diphthalat_water_receiver + /*
+*/ dieldrin_water_receiver + /*
+*/ diuron_water_receiver + /*
+*/ endosulfan_water_receiver + /*
+*/ endrin_water_receiver + /*
+*/ ethylbenzen_water_receiver + /*
+*/ ethylenoxid_water_receiver + /*
+*/ fluoranthen_water_receiver + /*
+*/ halogenerede_water_receiver + /*
+*/ heptachlor_water_receiver + /*
+*/ hexachlorbenzen_water_receiver + /*
+*/ hexachlorbutadien_water_receiver + /*
+*/ kobber_water_receiver + /*
+*/ mercury_water_receiver + /*
+*/ lindan_water_receiver + /*
+*/ mirex_water_receiver + /*
+*/ naphthalen_water_receiver + /*
+*/ nikkel_water_receiver + /*
+*/ dioxin_water_receiver + /*
+*/ pentachlorbenzen_water_receiver + /*
+*/ pentachlorphenol_water_receiver + /*
+*/ phenoler_water_receiver + /*
+*/ polychlorerede_water_receiver + /*
+*/ polycykliske_water_receiver + /*
+*/ simazin_water_receiver + /*
+*/ tetrachlorethylen_water_receiver + /*
+*/ tetrachlormethan_water_receiver + /*
+*/ toluen_water_receiver + /*
+*/ toxaphen_water_receiver + /*
+*/ trichlorethylen_water_receiver + /*
+*/ trichlormethan_water_receiver + /*
+*/ trifluralin_water_receiver + /*
+*/ vinylchlorid_water_receiver + /*
+*/ xylener_water_receiver + /*
+*/ zynk_water_receiver 
+gen water_sew=hexachlorcyclohexan_water_sewer + /*
+*/ dichlorethan_water_sewer + /*
+*/ aldrin_water_sewer + /*
+*/ anthracen_water_sewer + /*
+*/ arsen_water_sewer + /*
+*/ atrazin_water_sewer + /*
+*/ benzen_water_sewer + /*
+*/ benzo_water_sewer + /*
+*/ bly_water_sewer + /*
+*/ cadmium_water_sewer + /*
+*/ chlordan_water_sewer + /*
+*/ chrom_water_sewer + /*
+*/ chlorpyrifos_water_sewer + /*
+*/ ddt_water_sewer + /*
+*/ dichlormethan_water_sewer + /*
+*/ diphthalat_water_sewer + /*
+*/ dieldrin_water_sewer + /*
+*/ diuron_water_sewer + /*
+*/ endosulfan_water_sewer + /*
+*/ endrin_water_sewer + /*
+*/ ethylbenzen_water_sewer + /*
+*/ ethylenoxid_water_sewer + /*
+*/ fluoranthen_water_sewer + /*
+*/ halogenerede_water_sewer + /*
+*/ heptachlor_water_sewer + /*
+*/ hexachlorbenzen_water_sewer + /*
+*/ hexachlorbutadien_water_sewer + /*
+*/ kobber_water_sewer + /*
+*/ mercury_water_sewer + /*
+*/ lindan_water_sewer + /*
+*/ mirex_water_sewer + /*
+*/ naphthalen_water_sewer + /*
+*/ nikkel_water_sewer + /*
+*/ dioxin_water_sewer + /*
+*/ pentachlorbenzen_water_sewer + /*
+*/ pentachlorphenol_water_sewer + /*
+*/ phenoler_water_sewer + /*
+*/ polychlorerede_water_sewer + /*
+*/ polycykliske_water_sewer + /*
+*/ simazin_water_sewer + /*
+*/ tetrachlorethylen_water_sewer + /*
+*/ tetrachlormethan_water_sewer + /*
+*/ toluen_water_sewer + /*
+*/ toxaphen_water_sewer + /*
+*/ trichlorethylen_water_sewer + /*
+*/ trichlormethan_water_sewer + /*
+*/ trifluralin_water_sewer + /*
+*/ vinylchlorid_water_sewer + /*
+*/ xylener_water_sewer + /*
+*/ zynk_water_sewer 
+
+*gen GHGs 
+gen GHGs=carbon_ghg + /*
+*/ chlorfluorcarboner_ghg + /*
+*/ dinitrogenoxid_ghg + /*
+*/ hydrochlorfluorcarboner_ghg + /*
+*/ hydrofluorcarboner_ghg + /*
+*/ metan_ghg + /*
+*/ perfluorcarboner_ghg + /*
+*/ svovlhexafluorid_ghg 
+
+save CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, replace
+/* this is for the data which are already aggregated
 import excel CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, firstrow 
 save CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, replace
-
+*/
 use CorporateGovernance_Main/Data/GreenAccounts/GreenAccounts2010_NewFormat, clear 
 destring year, replace 
 gen num=_n
