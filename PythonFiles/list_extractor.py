@@ -3,7 +3,7 @@ from googletrans import Translator
 import os 
 os.chdir(r"C:\Users\Dell\Dropbox\Il mio PC (DESKTOP-6UGDNEK)\Desktop\research_professional\corporate-governance-codes\PythonFiles")
 translator = Translator()
-df=pd.read_excel("GreenAccounts2010_NewFormat.xlsx")
+df=pd.read_excel("GreenAccounts2010_RawFormat.xlsx")
 df = df.fillna('')
 def comma(word):
     if word=="nan": 
