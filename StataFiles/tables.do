@@ -1,5 +1,5 @@
 ********************************************************************************
-*tables.do 09/28/2021 **********************************************************
+*tables.do 10/06/2021 **********************************************************
 ********************************************************************************
 /*
 Aim: this code produces the tables and pictures related to the master dataset of the 
@@ -1252,7 +1252,51 @@ graph export "DoFiles\TablesAndGraphs\Aggregate\Shipping\PM25_ut.png", replace
 
 
 
+*eu ets 
+cd .. 
+import excel Data\AggregatePollution\output_ets, firstrow clear 
+gen output=paper+oil+chemicals+soap+pharma+plastic+ceramic+concrete+metals+metals2+electricity+gas+hotwater+air 
+gen num=_n 
+drop if num>29
+destring year, replace 
+replace output=output-air if year<2012 
+keep year output electricity 
+rename electricity output_el 
+tempfile i
+save `i'
+import excel Data\AggregatePollution\emissions_ets, firstrow clear 
+destring year, replace 
+gen tot=total-shipping 
+gen ets=papaer+oil_refineries+chemicals+chemicals+parmaceuticals+cement+metals+electricity+air
+replace ets=ets-air if year<2012
+label variable ets "ETS industries"
+gen perc=ets/total*100
+gen perc_red=ets/tot*100
+label variable perc "% With shipping"
+label variable perc_red "% Without shipping"
+line perc perc_red year, xtitle("Year") ytitle("% of emissions excluding households") graphregion(color(white)) bgcolor(white) ylabel(0(10)100, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(102 1996 "Carbon Tax and Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(102 2005 "ETS")
+graph export "DoFiles\TablesAndGraphs\ets_perc.png", replace
+replace ets=ets/1000
+line ets year, xtitle("Year") ytitle("CO2 Emissions (millions of tonnes)") graphregion(color(white)) bgcolor(white) ylabel(, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(62 1996 "Carbon Tax and Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(62 2005 "ETS")
+graph export "DoFiles\TablesAndGraphs\ets_abs.png", replace
+merge 1:1 year using `i' 
+gen gdpadj=ets/output*1000
+line gdpadj year, xtitle("Year") ytitle("CO2 Emissions (Kg/2010-DKK)") graphregion(color(white)) bgcolor(white) ylabel(, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(0.5 1996 "Carbon Tax and Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(0.5 2005 "ETS")
+graph export "DoFiles\TablesAndGraphs\ets_adj.png", replace 
 
+
+gen perc_el=electricity/total*100
+gen perc_red_el=electricity/tot*100
+label variable perc_el "% With shipping"
+label variable perc_red_el "% Without shipping"
+line perc_el perc_red_el year, xtitle("Year") ytitle("% of emissions excluding households") graphregion(color(white)) bgcolor(white) ylabel(0(10)100, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(102 1994 "Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(102 2005 "EU ETS") xline(2000, lpattern(dash) lcolor(green))  text(102 2000 " DK ETS")
+graph export "DoFiles\TablesAndGraphs\el_perc.png", replace
+replace electricity=electricity/1000
+line electricity year, xtitle("Year") ytitle("CO2 Emissions (millions of tonnes)") graphregion(color(white)) bgcolor(white) ylabel(, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(52 1994 "Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(52 2005 "EU ETS") xline(2000, lpattern(dash) lcolor(green))  text(52 2000 "DK ETS")
+graph export "DoFiles\TablesAndGraphs\el_abs.png", replace 
+gen gdpadj_el=electricity/output_el *1000
+line gdpadj_el year, xtitle("Year") ytitle("CO2 Emissions (Kg/2010-DKK)") graphregion(color(white)) bgcolor(white) ylabel(, angle(0)) xlabel(1990(1)2019, angle(90)) xline(1996, lpattern(dash) lcolor(green))  text(2.7 1994 "Green Accounts") xline(2005, lpattern(dash) lcolor(green))  text(2.7 2005 "EU ETS") xline(2000, lpattern(dash) lcolor(green))  text(2.7 2000 "DK ETS")
+graph export "DoFiles\TablesAndGraphs\el_adj.png", replace 
 
 
 
@@ -1845,6 +1889,176 @@ foreach i in stay_gen iso_production_gen iso_environment_gen iso_workenviro_gen 
 
 log close 
 
+
+
+
+
+********************************************************************************
+********************************************************************************
+********************************************************************************
+*USA****************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+cd "C:\Users\Dell\Dropbox\CorporateGovernance_Main\Data\TRI"
+
+*data on penalties 
+import delimited dollars, delimiter(",") clear 
+duplicates report activity_id case_number enf_conclusion_id 
+tempfile dollars 
+save `dollars'
+
+*data on dates
+import delimited date, delimiter(",") clear
+
+*merge 
+merge 1:1 activity_id case_number enf_conclusion_id using `dollars', nogenerate 
+
+
+*create total penalty and number of settlements per year 
+gen penalty = fed_penalty + state_local_penalty_amt
+drop if settlement_fy==2022 | settlement_fy==.
+gen pen=1 if penalty!=0 & penalty!=. 
+replace penalty=penalty/1000000
+
+
+
+preserve 
+sort settlement_fy
+by settlement_fy : egen s_pen=sum(penalty)
+by settlement_fy : egen n_pen=sum(pen) 
+bysort settlement_fy  (penalty): gen num=_n 
+drop if num!=1  
+replace s_pen=0 if s_pen==. 
+gen year = settlement_fy
+drop if year<1987 
+gen Thomas=s_pen if year<1990 
+gen Reilly=s_pen if year>1988 & year<1994 
+gen Browner=s_pen if year>1992 & year<2002 
+gen Whitman=s_pen if year>2000 & year<2004 
+gen Leavitt= s_pen if year>2002 & year <2006 
+gen Johnson= s_pen if year>2004 & year <2010 
+gen Jackson= s_pen if year >2008 & year < 2014 
+gen McCarthy= s_pen if year >2012 & year < 2018 
+gen Pruitt = s_pen if year >2016 & year <2020 
+gen Wheeler = s_pen if year >2018
+
+
+ 
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler settlement_fy, xtitle("Year") ytitle("Millions of $") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(700 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(700 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(700 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(700 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(700 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(700 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "pengen.png", as(png) name("Graph") replace
+restore
+ 
+
+preserve 
+sort settlement_fy
+by settlement_fy : egen s_pen=sum(pen) 
+bysort settlement_fy  (penalty): gen num=_n 
+drop if num!=1  
+replace s_pen=0 if s_pen==. 
+gen year = settlement_fy
+drop if year<1987 
+gen Thomas=s_pen if year<1990 
+gen Reilly=s_pen if year>1988 & year<1994 
+gen Browner=s_pen if year>1992 & year<2002 
+gen Whitman=s_pen if year>2000 & year<2004 
+gen Leavitt= s_pen if year>2002 & year <2006 
+gen Johnson= s_pen if year>2004 & year <2010 
+gen Jackson= s_pen if year >2008 & year < 2014 
+gen McCarthy= s_pen if year >2012 & year < 2018 
+gen Pruitt = s_pen if year >2016 & year <2020 
+gen Wheeler = s_pen if year >2018
+
+
+ 
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler settlement_fy, xtitle("Year") ytitle("N Penalties") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(400 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(400 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(400 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(400 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(400 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(400 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "npengen.png", as(png) name("Graph") replace
+restore
+
+*graphs related to the tri 
+preserve
+keep if primary_law=="EPCRA"
+sort settlement_fy  
+by settlement_fy: egen s_pen=sum(penalty)
+by settlement_fy : egen av_pen=mean(penalty)
+bysort settlement_fy  (penalty): gen n_settlements=_N 
+bysort settlement_fy  (penalty): gen num=_n 
+drop if num!=1 
+gen year = settlement_fy
+drop if year<1987 
+gen Thomas=s_pen if year<1990 
+gen Reilly=s_pen if year>1988 & year<1994 
+gen Browner=s_pen if year>1992 & year<2002 
+gen Whitman=s_pen if year>2000 & year<2004 
+gen Leavitt= s_pen if year>2002 & year <2006 
+gen Johnson= s_pen if year>2004 & year <2010 
+gen Jackson= s_pen if year >2008 & year < 2014 
+gen McCarthy= s_pen if year >2012 & year < 2018 
+gen Pruitt = s_pen if year >2016 & year <2020 
+gen Wheeler = s_pen if year >2018
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler  settlement_fy, xtitle("Year") ytitle("Millions of $") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(2.5 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(2.5 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(2.5 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(2.5 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(2.5 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(2.5 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "pentri.png", as(png) name("Graph") replace
+restore 
+preserve
+keep if primary_law=="EPCRA"
+sort settlement_fy  
+by settlement_fy: egen s_pen=sum(pen)
+
+bysort settlement_fy  (penalty): gen num=_n 
+drop if num!=1 
+gen year = settlement_fy
+drop if year<1987 
+gen Thomas=s_pen if year<1990 
+gen Reilly=s_pen if year>1988 & year<1994 
+gen Browner=s_pen if year>1992 & year<2002 
+gen Whitman=s_pen if year>2000 & year<2004 
+gen Leavitt= s_pen if year>2002 & year <2006 
+gen Johnson= s_pen if year>2004 & year <2010 
+gen Jackson= s_pen if year >2008 & year < 2014 
+gen McCarthy= s_pen if year >2012 & year < 2018 
+gen Pruitt = s_pen if year >2016 & year <2020 
+gen Wheeler = s_pen if year >2018
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler  settlement_fy, xtitle("Year") ytitle("N Penalties") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(40 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(40 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(40 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(40 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(40 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(40 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "npentri.png", as(png) name("Graph") replace
+restore 
+
+*inspections 
+import delimited inspections.csv, delimiter(",") clear 
+generate dates = date(actual_begin_date, "MDY")
+generate year = year(dates)
+sort year 
+drop if year<1987 
+preserve 
+by year: gen n_inspections=_N 
+gen Thomas=n_inspections if year<1990 
+gen Reilly=n_inspections if year>1988 & year<1994 
+gen Browner=n_inspections if year>1992 & year<2002 
+gen Whitman=n_inspections if year>2000 & year<2004 
+gen Leavitt= n_inspections if year>2002 & year <2006 
+gen Johnson= n_inspections if year>2004 & year <2010 
+gen Jackson= n_inspections if year >2008 & year < 2014 
+gen McCarthy= n_inspections if year >2012 & year < 2018 
+gen Pruitt = n_inspections if year >2016 & year <2020 
+gen Wheeler = n_inspections if year >2018
+replace n_inspections=0 if n_inspections==. 
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler year, xtitle("Year") ytitle("N Inspections") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(5000 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(5000 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(5000 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(5000 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(5000 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(5000 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "ispgen.png", as(png) name("Graph") replace
+restore 
+keep if statute_code=="EPCRA"
+by year: gen n_is_new=_N
+ gen Thomas=n_is_new if year<1990 
+gen Reilly=n_is_new if year>1988 & year<1994 
+gen Browner=n_is_new if year>1992 & year<2002 
+gen Whitman=n_is_new if year>2000 & year<2004 
+gen Leavitt= n_is_new if year>2002 & year <2006 
+gen Johnson= n_is_new if year>2004 & year <2010 
+gen Jackson= n_is_new if year >2008 & year < 2014 
+gen McCarthy= n_is_new if year >2012 & year < 2018 
+gen Pruitt = n_is_new if year >2016 & year <2020 
+gen Wheeler = n_is_new if year >2018
+
+line Thomas Reilly Browner Whitman Leavitt Johnson Jackson McCarthy Pruitt Wheeler year, xtitle("Year") ytitle("N Inspections") graphregion(color(white)) bgcolor(white) xline(1989, lpattern(dash))  text(400 1987.7 "{bf:Reagan}", color(blue) size(2.2) ) xline(1993, lpattern(dash))  text(400 1991 "{bf:G Bush}", color(blue) size(2.2) )   xline(2001, lpattern(dash))  text(400 1997 "{bf:Clinton}", color(red) size(2.2) ) xline(2009, lpattern(dash))  text(400 2005 "{bf:G W Bush}", color(blue) size(2.2) )  xline(2017, lpattern(dash))  text(400 2013 "{bf:Obama}", color(red) size(2.2) ) xline(2021, lpattern(dash))  text(400 2019 "{bf:Trump}", color(blue) size(2.2) )  legend(size(medsmall)) ylabel(,angle(0))  xlabel(1987(1)2021, angle(90))
+graph export "isptri.png", as(png) name("Graph") replace
 
 
 
